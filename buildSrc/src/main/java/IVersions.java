@@ -1,3 +1,3 @@
 public interface IVersions {
-    String guava = "28.2-jre";
+    String guava = "29.0-jre";
 }
