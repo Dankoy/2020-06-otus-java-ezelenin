@@ -30,6 +30,13 @@ build
 
 # Ignore idea and eclipse files
 .idea
+*.iml
+*.iws
+*.ipr
+*.idea
 .settings
 .project
+bin
+# JDT-specific (Eclipse Java Development Tools)     
+.classpath
 
