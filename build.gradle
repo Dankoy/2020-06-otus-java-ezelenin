@@ -12,30 +12,45 @@ plugins {
     id 'idea'
     id 'eclipse'
 
-    // Apply the application plugin to add support for building a CLI application.
-    id 'application'
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
+    // Build uber-jar
+    id 'com.github.johnrengelman.shadow' version '5.2.0' apply false
 }
 
-repositories {
-    // Use jcenter for resolving dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+idea {
+    project {
+        languageLevel = 14
+    }
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+allprojects {
+    group "ru.dankoy.otus"
+
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: "io.spring.dependency-management"
+    dependencyManagement {
+        dependencies {
+            dependency("com.google.guava:guava:${IVersions.guava}")
+        }
+    }
 }
 
 dependencies {
     // This dependency is used by the application.
-    implementation 'com.google.guava:guava:29.0-jre'
+   // implementation 'com.google.guava:guava:29.0-jre'
 
     // Use JUnit Jupiter API for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-}
-
-application {
-    // Define the main class for the application.
-    mainClassName = 'ru.dankoy.otus.App'
 }
 
 test {
