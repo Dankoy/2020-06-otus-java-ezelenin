@@ -37,20 +37,11 @@ allprojects {
     apply plugin: "io.spring.dependency-management"
     dependencyManagement {
         dependencies {
-            dependency("com.google.guava:guava:${IVersions.guava}")
+            dependency("com.google.guava:guava:${Versions.guava}")
+            dependency("org.junit.jupiter:junit-jupiter-api:${Versions.junitJupiterApi}")
+            dependency("org.junit.jupiter:junit-jupiter-engine:${Versions.junitJupiterEngine}")
         }
     }
-}
-
-dependencies {
-    // This dependency is used by the application.
-   // implementation 'com.google.guava:guava:29.0-jre'
-
-    // Use JUnit Jupiter API for testing.
-   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-
-    // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
 }
 
 test {
