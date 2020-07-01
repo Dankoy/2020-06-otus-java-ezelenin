@@ -8,7 +8,6 @@
 
 plugins {
     // Apply the java plugin to add support for Java
-    id 'java'
     id 'idea'
     id 'eclipse'
 
@@ -42,9 +41,4 @@ allprojects {
             dependency("org.junit.jupiter:junit-jupiter-engine:${Versions.junitJupiterEngine}")
         }
     }
-}
-
-test {
-    // Use junit platform for unit tests
-    useJUnitPlatform()
 }
