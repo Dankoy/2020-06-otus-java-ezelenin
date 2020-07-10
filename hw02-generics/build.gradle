@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+sourceCompatibility = JavaVersion.VERSION_14
+targetCompatibility = JavaVersion.VERSION_14
+
+dependencies {
+
+}
+
+shadowJar {
+    archiveBaseName.set('diyArrayList')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'ru.dankoy.otus.generics.DIYArrayList'
+    }
+}
+
+tasks.build.dependsOn tasks.shadowJar
