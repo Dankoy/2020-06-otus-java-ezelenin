@@ -22,8 +22,7 @@ public class DIYArrayList<E> implements List<E> {
         if (arraySize > 0) {
             array = new Object[arraySize];
         } else {
-            throw new IllegalArgumentException("Illegal Capacity: " +
-                    arraySize);
+            throw new IllegalArgumentException("Illegal Capacity: " + arraySize);
         }
     }
 
@@ -69,7 +68,6 @@ public class DIYArrayList<E> implements List<E> {
     public boolean add(E e) {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == null) {
-                System.out.println(e);
                 array[i] = e;
                 break;
             }
