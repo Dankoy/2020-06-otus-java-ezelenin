@@ -10,12 +10,43 @@ public class DIYArrayListMain {
 
     public static void main(String[] args) {
 
-        List<Integer> integerList = new DIYArrayList<>(20);
-        System.out.println(integerList.size());
-        integerList.add(10);
-        System.out.println(integerList.get(0));
+        List<Integer> integerList = new DIYArrayList<>();
+        List<Double> doubleList = new DIYArrayList<>();
+
+//        populateArrayWithIntegers(integerList);
+        populateArrayWithDoubles(doubleList);
+
+
+//        printArray(integerList);
+        printArray(doubleList);
+
 
 //        Collections.copy(integerList, integerList);
+
+    }
+
+    private static void populateArrayWithIntegers(List<Integer> integerList) {
+
+        for (int i = 0; i < integerList.size(); i++) {
+            integerList.add((int) (Math.random() * 1000));
+        }
+
+    }
+
+    private static void populateArrayWithDoubles(List<Double> doubleList) {
+
+        for (int i = 0; i < doubleList.size(); i++) {
+            doubleList.add((Math.random() * 1000));
+        }
+
+    }
+
+    private static void printArray(List<?> arrayList) {
+
+        System.out.println("Size: " + arrayList.size());
+        for (int i = 0; i < arrayList.size(); i++) {
+            System.out.println(arrayList.get(i));
+        }
 
     }
 
