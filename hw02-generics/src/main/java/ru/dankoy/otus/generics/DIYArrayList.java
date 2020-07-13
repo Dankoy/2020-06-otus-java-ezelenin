@@ -1,15 +1,16 @@
 package ru.dankoy.otus.generics;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 public class DIYArrayList<E> implements List<E> {
 
     private final static int INITIAL_ARRAY_SIZE = 10;
-    private static Object[] array = new Object[INITIAL_ARRAY_SIZE];
+    private Object[] array;
 
     public DIYArrayList() {
-
+        array = new Object[INITIAL_ARRAY_SIZE];
     }
 
     /**
@@ -19,6 +20,7 @@ public class DIYArrayList<E> implements List<E> {
      * @param arraySize
      */
     public DIYArrayList(int arraySize) {
+        array = new Object[arraySize];
         if (arraySize > 0) {
             array = new Object[arraySize];
         } else {
@@ -152,7 +154,7 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator() {
-        throw new UnsupportedOperationException();
+        return new DIYArrayListIterator();
     }
 
     @Override
@@ -169,4 +171,90 @@ public class DIYArrayList<E> implements List<E> {
     public Spliterator<E> spliterator() {
         throw new UnsupportedOperationException();
     }
+
+    // Итератор
+    private class DIYArrayListIterator implements ListIterator<E> {
+
+        private int currentPlace = 0;
+
+        @Override
+        public boolean hasNext() {
+
+            if (currentPlace < size()) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+
+        @Override
+        public E next() {
+            if (hasNext()) {
+                Object element = array[currentPlace];
+                currentPlace += 1;
+                return (E) element;
+            } else {
+                throw new java.util.NoSuchElementException();
+            }
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return false;
+        }
+
+        @Override
+        public E previous() {
+            return null;
+        }
+
+        @Override
+        public int nextIndex() {
+            return 0;
+        }
+
+        @Override
+        public int previousIndex() {
+            return 0;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void set(E e) {
+
+        }
+
+        @Override
+        public void add(E e) {
+
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super E> action) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+
 }
+
+/*
+    private int current = 0;
+
+    public boolean hasNext() {
+        return current < size();
+    }
+
+    public E next() {
+        if (!hasNext()) throw new java.util.NoSuchElementException();
+        return theItems[current++];
+    }
+
+    public void remove() {
+        MyArrayList.this.remove(--current); // reference the outer class
+    }*/

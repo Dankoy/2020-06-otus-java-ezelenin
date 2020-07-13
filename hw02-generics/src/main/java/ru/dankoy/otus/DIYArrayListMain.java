@@ -4,6 +4,7 @@ import ru.dankoy.otus.generics.DIYArrayList;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class DIYArrayListMain {
@@ -20,6 +21,12 @@ public class DIYArrayListMain {
 //        printArray(integerList);
         printArray(doubleList);
 
+        Iterator listIterator = doubleList.listIterator();
+        int k = 0;
+        while (listIterator.hasNext()) {
+            System.out.println(k + ": "  + listIterator.next());
+            k++;
+        }
 
 //        Collections.copy(integerList, integerList);
 
