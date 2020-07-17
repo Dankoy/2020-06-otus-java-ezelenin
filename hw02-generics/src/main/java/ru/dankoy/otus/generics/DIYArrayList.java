@@ -6,7 +6,7 @@ import java.util.function.UnaryOperator;
 
 public class DIYArrayList<E> implements List<E> {
 
-    private final static int INITIAL_ARRAY_SIZE = 30;
+    private final static int INITIAL_ARRAY_SIZE = 0;
     private Object[] array;
 
     public DIYArrayList() {
@@ -28,7 +28,6 @@ public class DIYArrayList<E> implements List<E> {
         }
     }
 
-    // Непонятно откуда забирается длина массива. Видимо подтягивается какая-то реализация length из Dummy массива?
     @Override
     public int size() {
         return array.length;
@@ -60,20 +59,14 @@ public class DIYArrayList<E> implements List<E> {
     }
 
     /**
-     * Метод добавляющий элемент в массив. Ищет первое вхождение null в массив и вставляет туда указанный элемент.
-     * Нет проверок, на indexOutOfBound. (Objects.checkIndex(index, size);)
+     * Метод добавляющий элемент в массив.
      *
      * @param e
      * @return
      */
     @Override
     public boolean add(E e) {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == null) {
-                array[i] = e;
-                break;
-            }
-        }
+        set(this.size(), e);
         return true;
     }
 
@@ -112,7 +105,6 @@ public class DIYArrayList<E> implements List<E> {
         throw new UnsupportedOperationException();
     }
 
-    // Непонятно что за компаратор. Из класса @Collections передается null.
     @Override
     public void sort(Comparator<? super E> c) {
         Arrays.sort((E[]) array, 0, array.length, c);
@@ -130,13 +122,12 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
-        if (index > this.size()) {
-            throw new IndexOutOfBoundsException();
-        } else {
-            E oldElement = (E) array[index];
-            array[index] = element;
-            return oldElement;
+        if (index >= this.size()) {
+            grow();
         }
+        E oldElement = (E) array[index];
+        array[index] = element;
+        return oldElement;
     }
 
     @Override
@@ -159,6 +150,7 @@ public class DIYArrayList<E> implements List<E> {
         throw new UnsupportedOperationException();
     }
 
+    // Итератор
     @Override
     public ListIterator<E> listIterator() {
         return new DIYArrayListIterator();
@@ -177,6 +169,15 @@ public class DIYArrayList<E> implements List<E> {
     @Override
     public Spliterator<E> spliterator() {
         throw new UnsupportedOperationException();
+    }
+
+    private void grow() {
+        Object[] newArray = new Object[array.length + 1];
+
+        for (int i = 0; i < array.length; i++) {
+            newArray[i] = array[i];
+        }
+        array = newArray;
     }
 
     // Итератор
