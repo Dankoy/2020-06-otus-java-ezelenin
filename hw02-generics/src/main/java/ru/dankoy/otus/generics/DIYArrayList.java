@@ -6,7 +6,7 @@ import java.util.function.UnaryOperator;
 
 public class DIYArrayList<E> implements List<E> {
 
-    private final static int INITIAL_ARRAY_SIZE = 10;
+    private final static int INITIAL_ARRAY_SIZE = 30;
     private Object[] array;
 
     public DIYArrayList() {
@@ -112,9 +112,10 @@ public class DIYArrayList<E> implements List<E> {
         throw new UnsupportedOperationException();
     }
 
+    // Непонятно что за компаратор. Из класса @Collections передается null.
     @Override
     public void sort(Comparator<? super E> c) {
-        throw new UnsupportedOperationException();
+        Arrays.sort((E[]) array, 0, array.length, c);
     }
 
     @Override
@@ -129,7 +130,13 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
-        throw new UnsupportedOperationException();
+        if (index > this.size()) {
+            throw new IndexOutOfBoundsException();
+        } else {
+            E oldElement = (E) array[index];
+            array[index] = element;
+            return oldElement;
+        }
     }
 
     @Override
@@ -176,6 +183,7 @@ public class DIYArrayList<E> implements List<E> {
     private class DIYArrayListIterator implements ListIterator<E> {
 
         private int currentPlace = 0;
+        private int lastReturnedIndex = -1;
 
         @Override
         public boolean hasNext() {
@@ -192,6 +200,7 @@ public class DIYArrayList<E> implements List<E> {
         public E next() {
             if (hasNext()) {
                 Object element = array[currentPlace];
+                lastReturnedIndex = currentPlace;
                 currentPlace += 1;
                 return (E) element;
             } else {
@@ -201,22 +210,22 @@ public class DIYArrayList<E> implements List<E> {
 
         @Override
         public boolean hasPrevious() {
-            return false;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public E previous() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public int nextIndex() {
-            return 0;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public int previousIndex() {
-            return 0;
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -226,12 +235,14 @@ public class DIYArrayList<E> implements List<E> {
 
         @Override
         public void set(E e) {
+            // крайние случаи здесь могут быть?
+            DIYArrayList.this.set(lastReturnedIndex, e);
 
         }
 
         @Override
         public void add(E e) {
-
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -242,19 +253,3 @@ public class DIYArrayList<E> implements List<E> {
 
 
 }
-
-/*
-    private int current = 0;
-
-    public boolean hasNext() {
-        return current < size();
-    }
-
-    public E next() {
-        if (!hasNext()) throw new java.util.NoSuchElementException();
-        return theItems[current++];
-    }
-
-    public void remove() {
-        MyArrayList.this.remove(--current); // reference the outer class
-    }*/
