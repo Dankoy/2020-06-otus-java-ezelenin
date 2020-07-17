@@ -14,14 +14,14 @@ public class DIYArrayList<E> implements List<E> {
     }
 
     /**
-     * Конструктор, создающий ArrayList определенного размера. Если размер отрицательный или нулевой - выбрасывается
+     * Конструктор, создающий ArrayList определенного размера. Если размер отрицательный - выбрасывается
      * исключение
      *
      * @param arraySize
      */
     public DIYArrayList(int arraySize) {
         array = new Object[arraySize];
-        if (arraySize > 0) {
+        if (arraySize >= 0) {
             array = new Object[arraySize];
         } else {
             throw new IllegalArgumentException("Illegal Capacity: " + arraySize);
