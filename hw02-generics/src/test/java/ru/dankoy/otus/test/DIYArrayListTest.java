@@ -9,25 +9,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DIYArrayListTest {
 
     private static List<Integer> arrayList1 = new DIYArrayList<>();
     private static List<Integer> arrayList2 = new DIYArrayList<>();
-    private static List<Integer> assertToArrayList1 = new ArrayList<>();
-    private static List<Integer> assertToArrayList2 = new ArrayList<>();
+    private static List<Integer> assertToArrayList1;
+    private static List<Integer> assertToArrayList2;
 
     // Заполняет листы данными
     @BeforeAll
     public static void setUp() {
 
-        DIYArrayListMain.populateArrayWithIntegers(arrayList1, 5);
-        DIYArrayListMain.populateArrayWithIntegers(arrayList2, 5);
+        DIYArrayListMain.populateArrayWithIntegers(arrayList1, 50);
+        DIYArrayListMain.populateArrayWithIntegers(arrayList2, 50);
 
-        copyArrays(assertToArrayList1, arrayList1);
-        copyArrays(assertToArrayList2, arrayList2);
+        assertToArrayList1 = new ArrayList<>(arrayList1);
+        assertToArrayList2 = new ArrayList<>(arrayList2);
 
     }
 
@@ -37,23 +36,63 @@ public class DIYArrayListTest {
         //Сортировка обычного ArrayList
         Collections.sort(assertToArrayList1);
         Collections.sort(assertToArrayList2);
-        DIYArrayListMain.printArray(assertToArrayList1);
+        System.out.println(assertToArrayList1);
 
         // Сортировка DIY листа
         Collections.sort(arrayList1);
         Collections.sort(arrayList2);
         DIYArrayListMain.printArray(arrayList1);
 
-//        assertThat(arrayList1).isEqualsTo(assertToArrayList2);
-//        assertEquals(arrayList2, assertToArrayList2);
+        // Проверка, что отсортированные DIY листы равны отсортированным ArrayList
+        assertThat(arrayList1.toArray()).isEqualTo(assertToArrayList1.toArray());
+        assertThat(arrayList2.toArray()).isEqualTo(assertToArrayList2.toArray());
 
     }
 
-    private static void copyArrays(List<Integer> list1, List<Integer> list2) {
+    @Test
+    public void collectionsSortWithComparatorMethodTest() {
 
-        for (int i = 0; i < list2.size(); i++) {
-            list1.add(list2.get(i));
-        }
+        //Сортировка обычного ArrayList
+        Collections.sort(assertToArrayList1, Collections.reverseOrder());
+        Collections.sort(assertToArrayList2, Collections.reverseOrder());
+        System.out.println(assertToArrayList1);
+
+        // Сортировка DIY листа
+        Collections.sort(arrayList1, Collections.reverseOrder());
+        Collections.sort(arrayList2, Collections.reverseOrder());
+        DIYArrayListMain.printArray(arrayList1);
+
+        // Проверка, что отсортированные DIY листы равны отсортированным ArrayList
+        assertThat(arrayList1.toArray()).isEqualTo(assertToArrayList1.toArray());
+        assertThat(arrayList2.toArray()).isEqualTo(assertToArrayList2.toArray());
+
+    }
+
+    @Test
+    public void collectionsCopyMethodTest() {
+
+        Collections.copy(assertToArrayList1, assertToArrayList2);
+        System.out.println(assertToArrayList1);
+
+        Collections.copy(arrayList1, arrayList2);
+        DIYArrayListMain.printArray(arrayList1);
+
+        // Проверка, что копирование DIY листов работает идентично копированию ArrayList
+        assertThat(arrayList1.toArray()).isEqualTo(assertToArrayList1.toArray());
+
+    }
+
+    @Test
+    public void collectionsAddAllMethodTest() {
+
+        Collections.addAll(assertToArrayList1, 5, 1, 9, 100, 18, 33);
+        System.out.println(assertToArrayList1);
+
+        Collections.addAll(arrayList1, 5, 1, 9, 100, 18, 33);
+        DIYArrayListMain.printArray(arrayList1);
+
+        // Проверка, что копирование DIY листов работает идентично копированию ArrayList
+        assertThat(arrayList1.toArray()).isEqualTo(assertToArrayList1.toArray());
 
     }
 
