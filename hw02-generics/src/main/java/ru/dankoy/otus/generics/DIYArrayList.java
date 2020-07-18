@@ -45,12 +45,12 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        throw new UnsupportedOperationException();
+        return new DIYArrayListSimpleIterator();
     }
 
     @Override
     public Object[] toArray() {
-        throw new UnsupportedOperationException();
+        return Arrays.copyOf(array, array.length);
     }
 
     @Override
@@ -180,7 +180,35 @@ public class DIYArrayList<E> implements List<E> {
         array = newArray;
     }
 
-    // Итератор
+
+    private class DIYArrayListSimpleIterator implements Iterator<E> {
+
+        private int currentPlace = 0;
+        private int lastReturnedIndex = -1;
+
+        @Override
+        public boolean hasNext() {
+            if (currentPlace < size()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public E next() {
+            if (hasNext()) {
+                Object element = array[currentPlace];
+                lastReturnedIndex = currentPlace;
+                currentPlace += 1;
+                return (E) element;
+            } else {
+                throw new java.util.NoSuchElementException();
+            }
+        }
+    }
+
+    // ListIterator
     private class DIYArrayListIterator implements ListIterator<E> {
 
         private int currentPlace = 0;
