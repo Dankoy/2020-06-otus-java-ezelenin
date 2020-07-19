@@ -15,8 +15,8 @@ public class DIYArrayListTest {
 
     private static List<Integer> arrayList1 = new DIYArrayList<>();
     private static List<Integer> arrayList2 = new DIYArrayList<>();
-    private static List<Integer> assertToArrayList1;
-    private static List<Integer> assertToArrayList2;
+    private static List<Integer> assertToArrayList1 = new ArrayList<>();
+    private static List<Integer> assertToArrayList2 = new ArrayList<>();
 
     // Заполняет листы данными
     @BeforeAll
@@ -24,6 +24,9 @@ public class DIYArrayListTest {
 
         DIYArrayListMain.populateArrayWithIntegers(arrayList1, 50);
         DIYArrayListMain.populateArrayWithIntegers(arrayList2, 50);
+
+//        copyArrays(arrayList1, assertToArrayList1);
+//        copyArrays(arrayList2, assertToArrayList2);
 
         assertToArrayList1 = new ArrayList<>(arrayList1);
         assertToArrayList2 = new ArrayList<>(arrayList2);
@@ -94,6 +97,12 @@ public class DIYArrayListTest {
         // Проверка, что копирование DIY листов работает идентично копированию ArrayList
         assertThat(arrayList1.toArray()).isEqualTo(assertToArrayList1.toArray());
 
+    }
+
+    private static void copyArrays(List<Integer> from, List<Integer> to) {
+        for (int i = 0; i < from.size(); i++) {
+            to.add(from.get(i));
+        }
     }
 
 }
