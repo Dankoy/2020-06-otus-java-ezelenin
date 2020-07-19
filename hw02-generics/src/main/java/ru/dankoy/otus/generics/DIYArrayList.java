@@ -6,8 +6,9 @@ import java.util.function.UnaryOperator;
 
 public class DIYArrayList<E> implements List<E> {
 
-    private final static int INITIAL_ARRAY_SIZE = 0;
+    private final static int INITIAL_ARRAY_SIZE = 10;
     private Object[] array;
+    private int lastUsedElement = 0;
 
     public DIYArrayList() {
         array = new Object[INITIAL_ARRAY_SIZE];
@@ -50,7 +51,7 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public Object[] toArray() {
-        return Arrays.copyOf(array, array.length);
+        return Arrays.copyOf(array, lastUsedElement);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class DIYArrayList<E> implements List<E> {
      */
     @Override
     public boolean add(E e) {
-        set(this.size(), e);
+        set(lastUsedElement, e);
         return true;
     }
 
@@ -127,6 +128,7 @@ public class DIYArrayList<E> implements List<E> {
         }
         E oldElement = (E) array[index];
         array[index] = element;
+        lastUsedElement = index + 1;
         return oldElement;
     }
 
@@ -172,12 +174,15 @@ public class DIYArrayList<E> implements List<E> {
     }
 
     private void grow() {
-        Object[] newArray = new Object[array.length + 1];
 
-        for (int i = 0; i < array.length; i++) {
-            newArray[i] = array[i];
-        }
-        array = newArray;
+        Object[] newArray = new Object[array.length * 2];
+        array = Arrays.copyOf(array, array.length * 2);
+
+//        for (int i = 0; i < array.length; i++) {
+//            newArray[i] = array[i];
+//        }
+//        array = newArray;
+
     }
 
 
