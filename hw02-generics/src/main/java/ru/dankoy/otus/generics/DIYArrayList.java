@@ -31,7 +31,7 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public int size() {
-        return array.length;
+        return lastUsedElement;
     }
 
     @Override
@@ -108,7 +108,7 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public void sort(Comparator<? super E> c) {
-        Arrays.sort((E[]) array, 0, array.length, c);
+        Arrays.sort((E[]) array, 0, lastUsedElement, c);
     }
 
     @Override
@@ -123,13 +123,18 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
-        if (index >= this.size()) {
+        if (index >= array.length) {
             grow();
+            E oldElement = (E) array[index];
+            array[index] = element;
+            lastUsedElement = index + 1;
+            return oldElement;
+        } else {
+            E oldElement = (E) array[index];
+            array[index] = element;
+            lastUsedElement = index + 1;
+            return oldElement;
         }
-        E oldElement = (E) array[index];
-        array[index] = element;
-        lastUsedElement = index + 1;
-        return oldElement;
     }
 
     @Override
@@ -175,13 +180,7 @@ public class DIYArrayList<E> implements List<E> {
 
     private void grow() {
 
-        Object[] newArray = new Object[array.length * 2];
         array = Arrays.copyOf(array, array.length * 2);
-
-//        for (int i = 0; i < array.length; i++) {
-//            newArray[i] = array[i];
-//        }
-//        array = newArray;
 
     }
 
@@ -193,7 +192,7 @@ public class DIYArrayList<E> implements List<E> {
 
         @Override
         public boolean hasNext() {
-            if (currentPlace < size()) {
+            if (currentPlace < array.length) {
                 return true;
             } else {
                 return false;
@@ -222,7 +221,7 @@ public class DIYArrayList<E> implements List<E> {
         @Override
         public boolean hasNext() {
 
-            if (currentPlace < size()) {
+            if (currentPlace < array.length) {
                 return true;
             } else {
                 return false;
