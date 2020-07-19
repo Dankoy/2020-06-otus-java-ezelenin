@@ -127,12 +127,16 @@ public class DIYArrayList<E> implements List<E> {
             grow();
             E oldElement = (E) array[index];
             array[index] = element;
-            lastUsedElement = index + 1;
+            if (index >= lastUsedElement) {
+                lastUsedElement = index + 1;
+            }
             return oldElement;
         } else {
             E oldElement = (E) array[index];
             array[index] = element;
-            lastUsedElement = index + 1;
+            if (index >= lastUsedElement) {
+                lastUsedElement = index + 1;
+            }
             return oldElement;
         }
     }
@@ -192,7 +196,7 @@ public class DIYArrayList<E> implements List<E> {
 
         @Override
         public boolean hasNext() {
-            if (currentPlace < array.length) {
+            if (currentPlace < lastUsedElement) {
                 return true;
             } else {
                 return false;
@@ -221,7 +225,7 @@ public class DIYArrayList<E> implements List<E> {
         @Override
         public boolean hasNext() {
 
-            if (currentPlace < array.length) {
+            if (currentPlace < lastUsedElement) {
                 return true;
             } else {
                 return false;
