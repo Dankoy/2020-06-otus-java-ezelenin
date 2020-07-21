@@ -125,20 +125,13 @@ public class DIYArrayList<E> implements List<E> {
     public E set(int index, E element) {
         if (index >= array.length) {
             grow();
-            E oldElement = (E) array[index];
-            array[index] = element;
-            if (index >= lastUsedElement) {
-                lastUsedElement = index + 1;
-            }
-            return oldElement;
-        } else {
-            E oldElement = (E) array[index];
-            array[index] = element;
-            if (index >= lastUsedElement) {
-                lastUsedElement = index + 1;
-            }
-            return oldElement;
         }
+        E oldElement = (E) array[index];
+        array[index] = element;
+        if (index >= lastUsedElement) {
+            lastUsedElement = index + 1;
+        }
+        return oldElement;
     }
 
     @Override
