@@ -12,4 +12,5 @@ include 'hw01-gradle'
 //include 'hw02-generics-otus-examples'
 include 'hw02-generics'
 //include 'hw04-qa-otus-examples'
+//include 'L05-collections'
 
