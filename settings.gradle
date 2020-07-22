@@ -10,5 +10,6 @@
 rootProject.name = '2020-06-otus-java-ezelenin'
 include 'hw01-gradle'
 //include 'hw02-generics-otus-examples'
+include 'hw02-generics'
 include 'hw03-annotations'
 

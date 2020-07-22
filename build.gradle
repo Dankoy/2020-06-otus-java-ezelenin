@@ -35,10 +35,29 @@ allprojects {
 
     apply plugin: "io.spring.dependency-management"
     dependencyManagement {
+
         dependencies {
+            imports {
+                mavenBom("org.springframework.boot:spring-boot-dependencies:${Versions.springBoot}.RELEASE")
+            }
             dependency("com.google.guava:guava:${Versions.guava}")
-            dependency("org.junit.jupiter:junit-jupiter-api:${Versions.junitJupiterApi}")
-            dependency("org.junit.jupiter:junit-jupiter-engine:${Versions.junitJupiterEngine}")
+
         }
     }
+
+    tasks.withType(JavaCompile) {
+        options.with {
+            encoding = 'UTF-8'
+        }
+    }
+
+    //print versions from BOM
+    task managedVersions {
+        doLast {
+            dependencyManagement.managedVersions.each {
+                println it
+            }
+        }
+    }
+
 }
