@@ -19,30 +19,30 @@ public class SimpleUnitTest {
 
   @Test
   public void method1Test() {
-    System.out.println("Test1");
+    System.out.println("method1Test");
     assertThat(1).isEqualTo(1);
   }
 
   @Test
   public void method2Test() {
-    System.out.println("Test2");
+    System.out.println("method2Test");
     assertThat(1).isEqualTo(2);
   }
 
   @Test
   public void method3Test() {
-    System.out.println("Test3");
+    System.out.println("method3Test");
     assertThat(1).isEqualTo(1);
   }
 
   @Test
   public void method4Test() {
-    System.out.println("Test4");
+    System.out.println("method4Test");
   }
 
   @Test
   public void method5Test() {
-    System.out.println("Test5");
+    System.out.println("method5Test");
     assertThat(1).isEqualTo(2);
   }
 
