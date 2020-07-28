@@ -10,6 +10,7 @@ import java.util.Map;
 import ru.dankoy.otus.annotations.After;
 import ru.dankoy.otus.annotations.Before;
 import ru.dankoy.otus.annotations.Test;
+import ru.dankoy.otus.testclasses.SimpleUnitTest;
 
 public class Main {
 

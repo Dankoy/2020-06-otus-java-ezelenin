@@ -1,4 +1,4 @@
-package ru.dankoy.otus.testframework;
+package ru.dankoy.otus.testclasses;
 
 import static org.assertj.core.api.Assertions.*;
 import ru.dankoy.otus.annotations.After;
