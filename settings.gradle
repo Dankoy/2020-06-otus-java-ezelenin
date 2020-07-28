@@ -15,4 +15,5 @@ include 'hw03-annotations'
 include 'hw04-qa-otus-examples'
 //include 'L05-collections'
 include 'L06-reflection'
+include 'L08-gc'
 
