@@ -28,9 +28,9 @@ public class Main {
         switchOnMonitoring();
         long beginTime = System.currentTimeMillis();
 
-        int size = 5 * 1000 * 1000;
-        int loopCounter = 1000;
-        //int loopCounter = 100000;
+        int size = 5 * 1000;
+//        int loopCounter = 1000;
+        int loopCounter = 100000;
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         ObjectName name = new ObjectName("ru.dankoy.otus.gc:type=Benchmark");
 

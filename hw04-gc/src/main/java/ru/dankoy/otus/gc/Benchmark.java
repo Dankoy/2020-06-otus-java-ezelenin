@@ -1,5 +1,8 @@
 package ru.dankoy.otus.gc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Benchmark implements BenchmarkMBean {
 
     private final int loopCounter;
@@ -10,13 +13,19 @@ public class Benchmark implements BenchmarkMBean {
     }
 
     void run() throws InterruptedException {
+        List<Object> listForOom = new ArrayList<>();
         for (int idx = 0; idx < loopCounter; idx++) {
             int local = size;
             Object[] array = new Object[local];
             for (int i = 0; i < local; i++) {
                 array[i] = new String(new char[0]);
             }
-//            Thread.sleep(10); //Label_1
+            Thread.sleep(10); //Label_1
+
+            for (int i = 0; i < local; i += 5) {
+                listForOom.add(array[i]);
+            }
+
         }
     }
 
