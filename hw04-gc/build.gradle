@@ -1,14 +1,22 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow'
 }
+
+sourceCompatibility = JavaVersion.VERSION_14
+targetCompatibility = JavaVersion.VERSION_14
+
 
 group 'ru.dankoy.otus'
 version 'unspecified'
 
-repositories {
-    mavenCentral()
+shadowJar {
+    archiveBaseName.set('hw04-gc')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'ru.dankoy.otus.gc.Main'
+    }
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
+tasks.build.dependsOn tasks.shadowJar
