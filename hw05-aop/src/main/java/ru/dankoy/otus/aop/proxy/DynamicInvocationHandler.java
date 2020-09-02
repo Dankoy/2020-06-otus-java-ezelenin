@@ -8,6 +8,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Evgeny 02-09-2020
@@ -19,6 +21,7 @@ public class DynamicInvocationHandler implements InvocationHandler {
 
     private final Object classForAop;
     private final Class<?> classForAopInterface;
+    private final Map<String, Boolean> isLoggingMap;
 
     /**
      * В конструктор передаются два аргумента:
@@ -31,6 +34,7 @@ public class DynamicInvocationHandler implements InvocationHandler {
     public DynamicInvocationHandler(Object classForAop, Class<?> classForAopInterface) {
         this.classForAop = classForAop;
         this.classForAopInterface = classForAopInterface;
+        this.isLoggingMap = getIsLoggingMap(classForAop);
     }
 
     public Object createClassForAop() {
@@ -42,7 +46,7 @@ public class DynamicInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        if (checkAnnotation(method)) {
+        if (isLoggingMap.get(method.getName())) {
             LOGGER.info("executed method: {}, params: {}", method.getName(), args);
         }
 
@@ -59,7 +63,7 @@ public class DynamicInvocationHandler implements InvocationHandler {
     private boolean checkAnnotation(Method method) {
 
         boolean result = false;
-        Annotation[] annotations = method.getDeclaredAnnotations();
+        Annotation[] annotations = method.getAnnotations();
 
         for (Annotation annotation : annotations) {
             result = annotation.annotationType().equals(Log.class);
@@ -67,6 +71,26 @@ public class DynamicInvocationHandler implements InvocationHandler {
 
         return result;
 
+    }
+
+    /**
+     * Проверка всех методов объекта класса, и возвращение Map<String, Boolean> карты, которая содержит имя метода и
+     * boolean значение присутствия аннотации @Log у метода
+     *
+     * @param object
+     * @return
+     */
+    private Map<String, Boolean> getIsLoggingMap(Object object) {
+        Map<String, Boolean> result = new HashMap<>();
+
+        Method[] methods = object.getClass().getMethods();
+
+        for (Method method : methods) {
+            boolean isLogAnnotation = checkAnnotation(method);
+            result.put(method.getName(), isLogAnnotation);
+        }
+
+        return result;
     }
 
 }
