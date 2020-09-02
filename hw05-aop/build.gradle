@@ -10,8 +10,13 @@ targetCompatibility = JavaVersion.VERSION_14
 group 'ru.dankoy.otus'
 version 'unspecified'
 
+dependencies {
+    implementation('org.slf4j:slf4j-api')
+    implementation('ch.qos.logback:logback-classic')
+}
+
 shadowJar {
-    archiveBaseName.set('hw04-gc')
+    archiveBaseName.set('hw05-aop')
     archiveVersion.set('0.1')
     archiveClassifier.set('')
     manifest {
