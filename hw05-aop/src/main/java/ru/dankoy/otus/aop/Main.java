@@ -4,6 +4,9 @@ import ru.dankoy.otus.aop.proxy.ClassForAop;
 import ru.dankoy.otus.aop.proxy.ClassForAopImpl;
 import ru.dankoy.otus.aop.proxy.DynamicInvocationHandler;
 
+/**
+ * @author Evgeny 02-09-2020
+ */
 public class Main {
 
     public static void main(String[] args) {

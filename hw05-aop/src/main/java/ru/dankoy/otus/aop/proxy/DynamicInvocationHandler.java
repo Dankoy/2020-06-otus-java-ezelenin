@@ -9,6 +9,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+/**
+ * @author Evgeny 02-09-2020
+ */
 public class DynamicInvocationHandler implements InvocationHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(
