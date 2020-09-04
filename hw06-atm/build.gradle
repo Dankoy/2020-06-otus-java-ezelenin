@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+sourceCompatibility = JavaVersion.VERSION_14
+targetCompatibility = JavaVersion.VERSION_14
+
+
+group 'ru.dankoy.otus'
+version 'unspecified'
+
+shadowJar {
+    archiveBaseName.set('hw06-atm')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'ru.dankoy.otus.atm.Main'
+    }
+}
+
+tasks.build.dependsOn tasks.shadowJar
