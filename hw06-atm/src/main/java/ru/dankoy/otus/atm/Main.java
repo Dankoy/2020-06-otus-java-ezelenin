@@ -16,7 +16,7 @@ public class Main {
         AutomatedTellerMachine atm = new AutomatedTellerMachineImpl(1, 1,
                 1, 1, 1);
         System.out.println(atm);
-        System.out.println(atm.getSumOfAllBanknotes());
+        System.out.println(atm.getSumOfAllBanknotesInAtm());
 
         // Определяем сколько купюр и какого номинала достаем из штанин.
         List<BanknoteTupleHelper> banknoteTupleHelperList = new ArrayList<>();
@@ -26,36 +26,18 @@ public class Main {
         banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.FIVE_HUNDRED, 2));
         banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.THOUSAND, 2));
 
-        List<Banknote> clientBanknotes = cashPopulationHelper(banknoteTupleHelperList);
+        List<Banknote> clientBanknotes = AutomatedTellerMachineImpl.cashPopulationHelper(banknoteTupleHelperList);
 
         // Проверка метода putMoney
         atm.putMoney(clientBanknotes);
 
         System.out.println(atm);
-        System.out.println(atm.getSumOfAllBanknotes());
+        System.out.println(atm.getSumOfAllBanknotesInAtm());
 
-    }
+        List<Banknote> claimedMoney = atm.claimMoney(3180);
+        System.out.println(claimedMoney);
 
-    /**
-     * Метод нужен для того, что бы съэмулировать ситуацию, когда человек достает из кошелька пачку купюр разных
-     * номиналов. Эта пачка потом может быть вставлена в банкомат.
-     *
-     * @param banknoteTupleHelpers
-     * @return
-     */
-    private static List<Banknote> cashPopulationHelper(List<BanknoteTupleHelper> banknoteTupleHelpers) {
-
-        List<Banknote> banknotes = new ArrayList<>();
-
-        for (BanknoteTupleHelper banknoteTupleHelper : banknoteTupleHelpers) {
-
-            for (int i = 0; i < banknoteTupleHelper.getAmount(); i++) {
-                banknotes.add(new Banknote(banknoteTupleHelper.getBill()));
-            }
-
-        }
-
-        return banknotes;
+        System.out.println(atm);
 
     }
 
