@@ -13,6 +13,11 @@ public class BanknoteTupleHelper extends Banknote {
         return amount;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + ", amount=" + amount + '}';
+    }
+
     public BanknoteTupleHelper(Bill bill, int amount) {
         super(bill);
         this.amount = amount;
