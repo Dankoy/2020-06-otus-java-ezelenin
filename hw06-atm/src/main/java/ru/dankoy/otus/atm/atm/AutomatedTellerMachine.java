@@ -1,5 +1,6 @@
 package ru.dankoy.otus.atm.atm;
 
+import ru.dankoy.otus.atm.atm.exceptions.OutOfMoneyException;
 import ru.dankoy.otus.atm.banknote.Banknote;
 import ru.dankoy.otus.atm.banknote.Bill;
 
@@ -8,11 +9,11 @@ import java.util.List;
 
 public interface AutomatedTellerMachine {
 
-    long getSumOfAllBanknotes();
+    long getSumOfAllBanknotesInAtm();
 
     void putMoney(List<Banknote> banknotes);
 
-    Banknote[] claimMoney();
+    List<Banknote> claimMoney(int money) throws Exception;
 
     /**
      * Метод создающий массив банкнот заданного типа
