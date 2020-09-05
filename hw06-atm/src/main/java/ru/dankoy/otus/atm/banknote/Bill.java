@@ -6,7 +6,7 @@ package ru.dankoy.otus.atm.banknote;
  */
 public enum Bill {
 
-    TEN(20),
+    TEN(10),
     FIFTY(50),
     HUNDRED(100),
     FIVE_HUNDRED(500),
