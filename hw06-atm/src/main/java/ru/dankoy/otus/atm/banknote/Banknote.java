@@ -19,7 +19,7 @@ public class Banknote {
     @Override
     public String toString() {
         return "Banknote{" +
-                "amount=" + bill +
+                "bill=" + bill +
                 '}';
     }
 
