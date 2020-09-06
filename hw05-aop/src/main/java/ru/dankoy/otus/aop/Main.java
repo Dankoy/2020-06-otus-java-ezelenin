@@ -4,6 +4,8 @@ import ru.dankoy.otus.aop.proxy.ClassForAop;
 import ru.dankoy.otus.aop.proxy.ClassForAopImpl;
 import ru.dankoy.otus.aop.proxy.DynamicInvocationHandler;
 
+import java.util.Map;
+
 /**
  * @author Evgeny 02-09-2020
  */
@@ -17,7 +19,7 @@ public class Main {
         classForAopObject.calculation(0);
         classForAopObject.calculation2(5, 5, 76, 8, 9);
         classForAopObject.calculation2(0);
-        classForAopObject.calculation3(1,2,"dsfsdf", true, false);
+        classForAopObject.calculation3(1, 2, "dsfsdf", true, false, Map.of(10, "hfs", "123", false));
 
     }
 

@@ -2,6 +2,8 @@ package ru.dankoy.otus.aop.proxy;
 
 import ru.dankoy.otus.aop.annotations.Log;
 
+import java.util.Map;
+
 /**
  * @author Evgeny 02-09-2020
  * Для метода с аннотацией @Log будет выведено сообщения логгера в консоль.
@@ -13,5 +15,5 @@ public interface ClassForAop {
 
     void calculation2(int... ints);
 
-    void calculation3(int n1, int n2, String n3, boolean tr, boolean fls);
+    void calculation3(int n1, int n2, String n3, boolean tr, boolean fls, Map<Object, Object> map);
 }
