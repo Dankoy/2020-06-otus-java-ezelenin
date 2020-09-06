@@ -16,4 +16,10 @@ public class ClassForAopImpl implements ClassForAop {
     public void calculation2(int... ints) {
     }
 
+    @Log
+    @Override
+    public void calculation3(int n1, int n2, String n3, boolean tr, boolean fls) {
+
+    }
+
 }

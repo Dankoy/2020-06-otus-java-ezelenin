@@ -17,6 +17,7 @@ public class Main {
         classForAopObject.calculation(0);
         classForAopObject.calculation2(5, 5, 76, 8, 9);
         classForAopObject.calculation2(0);
+        classForAopObject.calculation3(1,2,"dsfsdf", true, false);
 
     }
 
