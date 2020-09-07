@@ -15,5 +15,7 @@ public interface ClassForAop {
 
     void calculation(String str1, int n1);
 
+    void calculation2(String str1, int n1);
+
     void calculation(int n1, int n2, String n3, boolean tr, boolean fls, Map<Object, Object> map);
 }

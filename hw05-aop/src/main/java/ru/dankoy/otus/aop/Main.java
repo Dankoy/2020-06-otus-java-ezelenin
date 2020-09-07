@@ -18,6 +18,7 @@ public class Main {
         classForAopObject.calculation(5, 5, 76, 8, 9);
         classForAopObject.calculation(1, 2, "dsfsdf", true, false, Map.of(10, "hfs", "123", false));
         classForAopObject.calculation("asd", 82);
+        classForAopObject.calculation2("asd", 82);
 
     }
 
