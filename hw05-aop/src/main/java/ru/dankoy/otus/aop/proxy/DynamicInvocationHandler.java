@@ -84,7 +84,8 @@ public class DynamicInvocationHandler implements InvocationHandler {
 
     /**
      * Проверка всех методов объекта класса, и возвращение Set<String> сета, которая содержит имя метода у которого
-     * присутствует аннотация @Log
+     * присутствует аннотация @Log и все его параметры.
+     * calculation(int,int,java.lang.String,boolean,boolean,java.util.Map)
      *
      * @param object
      * @return
