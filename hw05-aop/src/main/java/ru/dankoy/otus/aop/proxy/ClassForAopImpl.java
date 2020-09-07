@@ -14,14 +14,14 @@ public class ClassForAopImpl implements ClassForAop {
     public void calculation(int... ints) {
     }
 
+//    @Log
     @Override
-    public void calculation2(int... ints) {
+    public void calculation(String str1, int n1) {
     }
 
     @Log
     @Override
-    public void calculation3(int n1, int n2, String n3, boolean tr, boolean fls, Map<Object, Object> map) {
-
+    public void calculation(int n1, int n2, String n3, boolean tr, boolean fls, Map<Object, Object> map) {
     }
 
 }
