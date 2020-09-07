@@ -14,12 +14,10 @@ public class Main {
     public static void main(String[] args) {
 
         DynamicInvocationHandler handler = new DynamicInvocationHandler(new ClassForAopImpl(), ClassForAop.class);
-        ClassForAop classForAopObject = (ClassForAop) handler.createClassForAop();
+        ClassForAop classForAopObject = (ClassForAop) handler.getProxy();
         classForAopObject.calculation(5, 5, 76, 8, 9);
-        classForAopObject.calculation(0);
-        classForAopObject.calculation2(5, 5, 76, 8, 9);
-        classForAopObject.calculation2(0);
-        classForAopObject.calculation3(1, 2, "dsfsdf", true, false, Map.of(10, "hfs", "123", false));
+        classForAopObject.calculation(1, 2, "dsfsdf", true, false, Map.of(10, "hfs", "123", false));
+        classForAopObject.calculation("asd", 82);
 
     }
 
