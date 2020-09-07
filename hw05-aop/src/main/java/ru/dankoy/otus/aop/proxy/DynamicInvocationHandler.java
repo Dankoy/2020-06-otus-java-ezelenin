@@ -8,6 +8,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +23,11 @@ public class DynamicInvocationHandler implements InvocationHandler {
     private final Object classForAop;
     private final Class<?> classForAopInterface;
     private final Set<String> isLoggingSet;
+    private final Object proxy;
+
+    public Object getProxy() {
+        return proxy;
+    }
 
     /**
      * В конструктор передаются два аргумента:
@@ -34,7 +40,10 @@ public class DynamicInvocationHandler implements InvocationHandler {
     public DynamicInvocationHandler(Object classForAop, Class<?> classForAopInterface) {
         this.classForAop = classForAop;
         this.classForAopInterface = classForAopInterface;
+        this.proxy = Proxy.newProxyInstance(DynamicInvocationHandler.class.getClassLoader(),
+                new Class<?>[]{classForAopInterface}, this);
         this.isLoggingSet = getIsLoggingMap(classForAop);
+
     }
 
     public Object createClassForAop() {
@@ -46,7 +55,7 @@ public class DynamicInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        if (isLoggingSet.contains(method.getName())) {
+        if (isLoggingSet.contains(Arrays.toString(method.getParameters()))) {
             LOGGER.info("executed method: {}, params: {}", method.getName(), args);
         }
 
@@ -87,7 +96,7 @@ public class DynamicInvocationHandler implements InvocationHandler {
 
         for (Method method : methods) {
             if (checkAnnotation(method))
-                result.add(method.getName());
+                result.add(Arrays.toString(method.getParameters()));
         }
 
         return result;
