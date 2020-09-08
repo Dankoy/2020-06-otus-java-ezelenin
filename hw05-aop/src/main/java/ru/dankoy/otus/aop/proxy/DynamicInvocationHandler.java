@@ -55,7 +55,7 @@ public class DynamicInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        if (isLoggingSet.contains(method.toString().substring(method.toString().indexOf(method.getName())))) {
+        if (isLoggingSet.contains(getMethodSignature(method))) {
             LOGGER.info("executed method: {}, params: {}", method.getName(), args);
         }
 
@@ -97,10 +97,20 @@ public class DynamicInvocationHandler implements InvocationHandler {
 
         for (Method method : methods) {
             if (checkAnnotation(method))
-                result.add(method.toString().substring(method.toString().indexOf(method.getName())));
+                result.add(getMethodSignature(method));
         }
 
         return result;
+    }
+
+    /**
+     * Получение сигнатуры метода
+     *
+     * @param method
+     * @return
+     */
+    private String getMethodSignature(Method method) {
+        return method.toString().substring(method.toString().indexOf(method.getName()));
     }
 
 }
