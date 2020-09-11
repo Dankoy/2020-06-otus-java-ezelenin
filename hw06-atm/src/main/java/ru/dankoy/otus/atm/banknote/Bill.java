@@ -14,12 +14,12 @@ public enum Bill {
 
     private int value;
 
-    public int getValue() {
-        return value;
-    }
-
     Bill(int value) {
         this.value = value;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

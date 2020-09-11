@@ -19,6 +19,15 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
         money = new HashMap<>();
     }
 
+    /**
+     * Получение билдера
+     *
+     * @return
+     */
+    public static AutomatedTellerMachineBuilder newBuilder() {
+        return new AutomatedTellerMachineImpl().new AutomatedTellerMachineBuilder();
+    }
+
     @Override
     public long getSumOfAllBanknotesInAtm() {
         return getSumOfAllBanknotes();
@@ -178,15 +187,6 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
     private void subtractRequestedMoney(Bill bill, long amount) {
         long updatedAmount = this.money.get(bill) - amount;
         this.money.put(bill, updatedAmount);
-    }
-
-    /**
-     * Получение билдера
-     *
-     * @return
-     */
-    public static AutomatedTellerMachineBuilder newBuilder() {
-        return new AutomatedTellerMachineImpl().new AutomatedTellerMachineBuilder();
     }
 
     /**

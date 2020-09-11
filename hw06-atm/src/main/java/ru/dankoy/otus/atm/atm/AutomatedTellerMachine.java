@@ -1,6 +1,5 @@
 package ru.dankoy.otus.atm.atm;
 
-import ru.dankoy.otus.atm.atm.exceptions.OutOfMoneyException;
 import ru.dankoy.otus.atm.banknote.Banknote;
 import ru.dankoy.otus.atm.banknote.Bill;
 

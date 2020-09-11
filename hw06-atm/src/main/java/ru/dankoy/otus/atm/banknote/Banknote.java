@@ -8,12 +8,12 @@ public class Banknote {
 
     private final Bill bill;
 
-    public Bill getBill() {
-        return this.bill;
-    }
-
     public Banknote(Bill bill) {
         this.bill = bill;
+    }
+
+    public Bill getBill() {
+        return this.bill;
     }
 
     @Override
