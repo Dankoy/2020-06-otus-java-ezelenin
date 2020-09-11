@@ -6,14 +6,16 @@ import ru.dankoy.otus.atm.banknote.Bill;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public interface AutomatedTellerMachine {
 
     long getSumOfAllBanknotesInAtm();
 
-    void putMoney(List<Banknote> banknotes);
+    void putMoney(List<Banknote> money);
 
-    List<Banknote> claimMoney(int money) throws Exception;
+    List<Banknote> claimMoney(long money) throws Exception;
 
     /**
      * Метод создающий массив банкнот заданного типа
@@ -22,6 +24,7 @@ public interface AutomatedTellerMachine {
      * @param amount
      * @return
      */
+    @Deprecated
     default List<Banknote> populateBanknote(Bill bill, int amount) {
 
         List<Banknote> banknotes = new ArrayList<>();
@@ -32,6 +35,20 @@ public interface AutomatedTellerMachine {
 
         return banknotes;
 
+    }
+
+    /**
+     * Метод конвертирующий List из банкнот, в Map<Bill, Long>: номинал - количество
+     *
+     * @param banknotes
+     * @return
+     */
+    default Map<Bill, Long> convertListOfMoneyToMap(List<Banknote> banknotes) {
+        return banknotes.stream().collect(
+                Collectors.groupingBy(
+                        banknote -> banknote.getBill(), Collectors.counting()
+                )
+        );
     }
 
 }
