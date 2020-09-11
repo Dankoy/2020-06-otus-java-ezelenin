@@ -7,7 +7,6 @@ import ru.dankoy.otus.atm.atm.AutomatedTellerMachineImpl;
 import ru.dankoy.otus.atm.atm.exceptions.NotEnoughBanknotesException;
 import ru.dankoy.otus.atm.atm.exceptions.OutOfMoneyException;
 import ru.dankoy.otus.atm.banknote.Banknote;
-import ru.dankoy.otus.atm.banknote.BanknoteTupleHelper;
 import ru.dankoy.otus.atm.banknote.Bill;
 
 import java.util.ArrayList;
@@ -19,25 +18,29 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class AtmTest {
 
     private AutomatedTellerMachine atm;
-    private static List<Banknote> clientBanknotes;
+    private List<Banknote> clientBanknotes = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
 
         // Общая сумма в банкомате при инициализации - 8270
-        atm = new AutomatedTellerMachineImpl(2, 5,
-                5, 5, 5);
+        atm = new AutomatedTellerMachineImpl().newBuilder().setBanknoteFiftyRub(5).setBanknoteTenRub(2)
+                .setBanknoteHundredRub(5).setBanknoteFiveHundredRub(5).setBanknoteThousandRub(5).build();
 
         // Определяем сколько купюр и какого номинала достаем из штанин.
         // Общая сумма равна - 3320
-        List<BanknoteTupleHelper> banknoteTupleHelperList = new ArrayList<>();
-        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.TEN, 2));
-        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.FIFTY, 2));
-        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.HUNDRED, 2));
-        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.FIVE_HUNDRED, 2));
-        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.THOUSAND, 2));
+        clientBanknotes.add(new Banknote(Bill.FIFTY));
+        clientBanknotes.add(new Banknote(Bill.FIFTY));
+        clientBanknotes.add(new Banknote(Bill.TEN));
+        clientBanknotes.add(new Banknote(Bill.TEN));
+        clientBanknotes.add(new Banknote(Bill.HUNDRED));
+        clientBanknotes.add(new Banknote(Bill.HUNDRED));
+        clientBanknotes.add(new Banknote(Bill.FIVE_HUNDRED));
+        clientBanknotes.add(new Banknote(Bill.FIVE_HUNDRED));
+        clientBanknotes.add(new Banknote(Bill.THOUSAND));
+        clientBanknotes.add(new Banknote(Bill.THOUSAND));
 
-        clientBanknotes = AutomatedTellerMachineImpl.cashPopulationHelper(banknoteTupleHelperList);
+//        clientBanknotes = AutomatedTellerMachineImpl.cashPopulationHelper(banknoteTupleHelperList);
 
     }
 
@@ -55,7 +58,7 @@ public class AtmTest {
 
         List<Banknote> claimedMoney = atm.claimMoney(3170);
         assertThat(claimedMoney).extracting(Banknote::getBill).hasSize(7).containsSequence(
-                Bill.THOUSAND, Bill.THOUSAND, Bill.THOUSAND, Bill.HUNDRED, Bill.FIFTY, Bill.TEN, Bill.TEN);
+                Bill.HUNDRED, Bill.TEN, Bill.TEN, Bill.FIFTY, Bill.THOUSAND, Bill.THOUSAND, Bill.THOUSAND);
 
     }
 
