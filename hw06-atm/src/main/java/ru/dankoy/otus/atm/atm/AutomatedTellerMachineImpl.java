@@ -3,71 +3,48 @@ package ru.dankoy.otus.atm.atm;
 import ru.dankoy.otus.atm.atm.exceptions.NotEnoughBanknotesException;
 import ru.dankoy.otus.atm.atm.exceptions.OutOfMoneyException;
 import ru.dankoy.otus.atm.banknote.Banknote;
-import ru.dankoy.otus.atm.banknote.BanknoteTupleHelper;
 import ru.dankoy.otus.atm.banknote.Bill;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
 
-    private List<Banknote> banknoteTenRub;
-    private List<Banknote> banknoteFiftyRub;
-    private List<Banknote> banknoteOneHundredRub;
-    private List<Banknote> banknoteFiveHundredRub;
-    private List<Banknote> banknoteOneThousandRub;
+    private final Map<Bill, Long> money;
     private long sumOfAllBanknotesInAtm;
+
+    public AutomatedTellerMachineImpl() {
+        money = new HashMap<>();
+    }
 
     @Override
     public long getSumOfAllBanknotesInAtm() {
-        return sumOfAllBanknotesInAtm;
+        return getSumOfAllBanknotes();
     }
 
     @Override
     public String toString() {
-        return "AutomatedTellerMachine{" +
-                "banknoteTen=" + banknoteTenRub +
-                ", banknoteFifty=" + banknoteFiftyRub +
-                ", banknoteOneHundred=" + banknoteOneHundredRub +
-                ", banknoteFiveHundred=" + banknoteFiveHundredRub +
-                ", banknoteOneThousand=" + banknoteOneThousandRub +
+        return "AutomatedTellerMachineImpl{" +
+                "money=" + money +
+                ", sumOfAllBanknotesInAtm=" + getSumOfAllBanknotes() +
                 '}';
-    }
-
-    /**
-     * Конструктор ATM заполняющий банкноты на старте.
-     * Указывается количество банкнот каждого типа.
-     *
-     * @param banknoteTenAmount
-     * @param banknoteFiftyAmount
-     * @param banknoteOneHundredAmount
-     * @param banknoteFiveHundredAmount
-     * @param banknoteOneThousandAmount
-     */
-    public AutomatedTellerMachineImpl(int banknoteTenAmount, int banknoteFiftyAmount, int banknoteOneHundredAmount,
-            int banknoteFiveHundredAmount, int banknoteOneThousandAmount) {
-
-        this.banknoteTenRub = populateBanknote(Bill.TEN, banknoteTenAmount);
-        this.banknoteFiftyRub = populateBanknote(Bill.FIFTY, banknoteFiftyAmount);
-        this.banknoteOneHundredRub = populateBanknote(Bill.HUNDRED, banknoteOneHundredAmount);
-        this.banknoteFiveHundredRub = populateBanknote(Bill.FIVE_HUNDRED, banknoteFiveHundredAmount);
-        this.banknoteOneThousandRub = populateBanknote(Bill.THOUSAND, banknoteOneThousandAmount);
-        this.sumOfAllBanknotesInAtm = getSumOfAllBanknotes();
-
     }
 
     /**
      * Метод реализующий прием различных купюр.
      *
-     * @param banknotes
+     * @param money
      */
     @Override
-    public void putMoney(List<Banknote> banknotes) {
+    public void putMoney(List<Banknote> money) {
 
-        for (Banknote banknote : banknotes) {
+        Map<Bill, Long> result = convertListOfMoneyToMap(money);
 
-            switchCheckBillTypeAndInsertBanknote(banknote);
-
+        for (Map.Entry<Bill, Long> entry : result.entrySet()) {
+            long newAmountOfMoney = entry.getValue() + this.money.get(entry.getKey());
+            switchCheckBillTypeAndInsertBanknote(entry.getKey(), newAmountOfMoney);
         }
 
         this.sumOfAllBanknotesInAtm = getSumOfAllBanknotes();
@@ -80,9 +57,9 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
      * @return
      */
     @Override
-    public List<Banknote> claimMoney(int moneyToClaim) throws Exception {
+    public List<Banknote> claimMoney(long moneyToClaim) throws Exception {
 
-        List<BanknoteTupleHelper> banknoteTupleHelperList = new ArrayList<>();
+        Map<Bill, Long> moneyHelper = new HashMap<>();
 
         if (moneyToClaim > this.getSumOfAllBanknotes()) {
             throw new OutOfMoneyException(moneyToClaim, this);
@@ -92,7 +69,8 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
 
             for (int i = Bill.values().length - 1; i >= 0; i--) {
                 if (moneyToClaim >= bills[i].getValue()) {
-                    banknoteTupleHelperList.add(getAmountOfBanknotesNeeded(bills[i], moneyToClaim));
+                    moneyHelper.put(bills[i],
+                            getAmountOfBanknotesNeeded(bills[i], moneyToClaim));
                 }
                 moneyToClaim = moneyToClaim % bills[i].getValue();
             }
@@ -100,33 +78,29 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
 
         try {
 
-            checkIfThereAreEnoughRequestedBanknotes(banknoteTupleHelperList);
-            return cashPopulationHelper(banknoteTupleHelperList);
+            checkIfThereAreEnoughRequestedBanknotes(moneyHelper);
+            return cashPopulationHelper(moneyHelper);
 
         } catch (NotEnoughBanknotesException e) {
             throw e;
         }
-
-
     }
 
     /**
      * Метод который из списка объектов BanknoteTupleHelper, содержащих тип купюры и ее количество, формирует список
      * из банкнот нужных номиналов в нужном количестве.
      *
-     * @param banknoteTupleHelpers
+     * @param cash
      * @return
      */
-    public static List<Banknote> cashPopulationHelper(List<BanknoteTupleHelper> banknoteTupleHelpers) {
+    public List<Banknote> cashPopulationHelper(Map<Bill, Long> cash) {
 
         List<Banknote> banknotes = new ArrayList<>();
 
-        for (BanknoteTupleHelper banknoteTupleHelper : banknoteTupleHelpers) {
-
-            for (int i = 0; i < banknoteTupleHelper.getAmount(); i++) {
-                banknotes.add(new Banknote(banknoteTupleHelper.getBill()));
+        for (Map.Entry<Bill, Long> entry : cash.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                banknotes.add(new Banknote(entry.getKey()));
             }
-
         }
 
         return banknotes;
@@ -141,25 +115,19 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
      * @param moneyToClaim
      * @return
      */
-    private BanknoteTupleHelper getAmountOfBanknotesNeeded(Bill bill, int moneyToClaim) {
-        int wholed = moneyToClaim / bill.getValue();
-        return new BanknoteTupleHelper(bill, wholed);
+    private long getAmountOfBanknotesNeeded(Bill bill, long moneyToClaim) {
+        return moneyToClaim / bill.getValue();
     }
 
     /**
-     * Проверка типа купюры и вставка в нужную ячейку
+     * Вставка купюры в нужную ячейку
      *
-     * @param banknote
+     * @param bill
+     * @param amount
      */
-    private void switchCheckBillTypeAndInsertBanknote(Banknote banknote) {
+    private void switchCheckBillTypeAndInsertBanknote(Bill bill, long amount) {
 
-        switch (banknote.getBill()) {
-            case TEN -> this.banknoteTenRub.add(banknote);
-            case FIFTY -> this.banknoteFiftyRub.add(banknote);
-            case HUNDRED -> this.banknoteOneHundredRub.add(banknote);
-            case FIVE_HUNDRED -> this.banknoteFiveHundredRub.add(banknote);
-            case THOUSAND -> this.banknoteOneThousandRub.add(banknote);
-        }
+        this.money.put(bill, amount);
 
     }
 
@@ -170,9 +138,13 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
      */
     private long getSumOfAllBanknotes() {
 
-        return ((banknoteTenRub.size() * Bill.TEN.getValue()) + banknoteFiftyRub.size() * Bill.FIFTY.getValue() +
-                banknoteOneHundredRub.size() * Bill.HUNDRED.getValue() + banknoteFiveHundredRub.size() * Bill.FIVE_HUNDRED.getValue() +
-                banknoteOneThousandRub.size() * Bill.THOUSAND.getValue());
+        long sum = 0;
+
+        for (Map.Entry<Bill, Long> entry : this.money.entrySet()) {
+            sum = sum + (entry.getValue() * entry.getKey().getValue());
+        }
+
+        return sum;
 
     }
 
@@ -183,60 +155,78 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
      *
      * @param requestedBankotes
      */
-    private void checkIfThereAreEnoughRequestedBanknotes(List<BanknoteTupleHelper> requestedBankotes) throws
+    private void checkIfThereAreEnoughRequestedBanknotes(Map<Bill, Long> requestedBankotes) throws
             NotEnoughBanknotesException {
 
-        for (BanknoteTupleHelper requestedBanknote : requestedBankotes) {
+        for (Map.Entry<Bill, Long> entry : requestedBankotes.entrySet()) {
 
-            switch (requestedBanknote.getBill()) {
-                case TEN:
-                    for (int i = requestedBanknote.getAmount() - 1; i >= 0; i--) {
-                        try {
-                            banknoteTenRub.remove(i);
-                        } catch (Exception e) {
-                            throw new NotEnoughBanknotesException(requestedBanknote);
-                        }
-                    }
-                    break;
-                case FIFTY:
-                    for (int i = requestedBanknote.getAmount() - 1; i >= 0; i--) {
-                        try {
-                            banknoteFiftyRub.remove(i);
-                        } catch (Exception e) {
-                            throw new NotEnoughBanknotesException(requestedBanknote);
-                        }
-                    }
-                    break;
-                case HUNDRED:
-                    for (int i = requestedBanknote.getAmount() - 1; i >= 0; i--) {
-                        try {
-                            banknoteOneHundredRub.remove(i);
-                        } catch (Exception e) {
-                            throw new NotEnoughBanknotesException(requestedBanknote);
-                        }
-                    }
-                    break;
-                case FIVE_HUNDRED:
-                    for (int i = requestedBanknote.getAmount() - 1; i >= 0; i--) {
-                        try {
-                            banknoteFiveHundredRub.remove(i);
-                        } catch (Exception e) {
-                            throw new NotEnoughBanknotesException(requestedBanknote);
-                        }
-                    }
-                    break;
-                case THOUSAND:
-                    for (int i = requestedBanknote.getAmount() - 1; i >= 0; i--) {
-                        try {
-                            banknoteOneThousandRub.remove(i);
-                        } catch (Exception e) {
-                            throw new NotEnoughBanknotesException(requestedBanknote);
-                        }
-                    }
-                    break;
+            if (entry.getValue() > this.money.get(entry.getKey())) {
+                throw new NotEnoughBanknotesException(requestedBankotes);
+            } else {
+                subtractRequestedMoney(entry.getKey(), entry.getValue());
             }
 
         }
+    }
+
+    /**
+     * Уменьшает количество банкнот указанного номинала в банкомате
+     *
+     * @param bill
+     * @param amount
+     */
+    private void subtractRequestedMoney(Bill bill, long amount) {
+        long updatedAmount = this.money.get(bill) - amount;
+        this.money.put(bill, updatedAmount);
+    }
+
+    /**
+     * Получение билдера
+     *
+     * @return
+     */
+    public static AutomatedTellerMachineBuilder newBuilder() {
+        return new AutomatedTellerMachineImpl().new AutomatedTellerMachineBuilder();
+    }
+
+    /**
+     * Билдер ATM
+     */
+    public class AutomatedTellerMachineBuilder {
+
+        private AutomatedTellerMachineBuilder() {
+            // private constructor
+        }
+
+        public AutomatedTellerMachineBuilder setBanknoteTenRub(long amount) {
+            AutomatedTellerMachineImpl.this.money.put(Bill.TEN, amount);
+            return this;
+        }
+
+        public AutomatedTellerMachineBuilder setBanknoteFiftyRub(long amount) {
+            AutomatedTellerMachineImpl.this.money.put(Bill.FIFTY, amount);
+            return this;
+        }
+
+        public AutomatedTellerMachineBuilder setBanknoteHundredRub(long amount) {
+            AutomatedTellerMachineImpl.this.money.put(Bill.HUNDRED, amount);
+            return this;
+        }
+
+        public AutomatedTellerMachineBuilder setBanknoteFiveHundredRub(long amount) {
+            AutomatedTellerMachineImpl.this.money.put(Bill.FIVE_HUNDRED, amount);
+            return this;
+        }
+
+        public AutomatedTellerMachineBuilder setBanknoteThousandRub(long amount) {
+            AutomatedTellerMachineImpl.this.money.put(Bill.THOUSAND, amount);
+            return this;
+        }
+
+        public AutomatedTellerMachine build() {
+            return AutomatedTellerMachineImpl.this;
+        }
+
     }
 
 }
