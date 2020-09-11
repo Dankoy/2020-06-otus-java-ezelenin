@@ -8,7 +8,7 @@ import ru.dankoy.otus.atm.atm.AutomatedTellerMachine;
  */
 public class OutOfMoneyException extends Exception {
 
-    public OutOfMoneyException(int moneyRequested, AutomatedTellerMachine atm) {
+    public OutOfMoneyException(long moneyRequested, AutomatedTellerMachine atm) {
         super("Error: requested: " + moneyRequested + " is out of " + atm.getSumOfAllBanknotesInAtm());
     }
 

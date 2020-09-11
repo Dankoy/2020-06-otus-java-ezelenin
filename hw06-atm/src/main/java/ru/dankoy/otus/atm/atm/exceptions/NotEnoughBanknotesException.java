@@ -1,6 +1,8 @@
 package ru.dankoy.otus.atm.atm.exceptions;
 
-import ru.dankoy.otus.atm.banknote.BanknoteTupleHelper;
+import ru.dankoy.otus.atm.banknote.Bill;
+
+import java.util.Map;
 
 /**
  * @author Evgeny
@@ -8,8 +10,8 @@ import ru.dankoy.otus.atm.banknote.BanknoteTupleHelper;
  */
 public class NotEnoughBanknotesException extends Exception {
 
-    public NotEnoughBanknotesException(BanknoteTupleHelper banknoteTupleHelper) {
-        super("Error: ATM doesn't have enough banknotes " + banknoteTupleHelper);
+    public NotEnoughBanknotesException(Map<Bill, Long> requestedBanknotes) {
+        super("Error: ATM doesn't have enough banknotes " + requestedBanknotes);
     }
 
 }
