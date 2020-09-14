@@ -1,5 +1,7 @@
 package ru.dankoy.otus.atm.atm;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.dankoy.otus.atm.atm.exceptions.NotEnoughBanknotesException;
 import ru.dankoy.otus.atm.atm.exceptions.OutOfMoneyException;
 import ru.dankoy.otus.atm.banknote.Banknote;
@@ -11,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(
+            AutomatedTellerMachineImpl.class);
 
     private final Map<Bill, Long> money;
     private long sumOfAllBanknotesInAtm;
@@ -53,7 +58,7 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
 
         for (Map.Entry<Bill, Long> entry : result.entrySet()) {
             long newAmountOfMoney = entry.getValue() + this.money.get(entry.getKey());
-            switchCheckBillTypeAndInsertBanknote(entry.getKey(), newAmountOfMoney);
+            renewAmountOfMoneyForParticularBillInAtm(entry.getKey(), newAmountOfMoney);
         }
 
         this.sumOfAllBanknotesInAtm = getSumOfAllBanknotes();
@@ -91,7 +96,8 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
             return cashPopulationHelper(moneyHelper);
 
         } catch (NotEnoughBanknotesException e) {
-            throw e;
+            LOGGER.error("Atm doesn't have enough money. Please try again later.");
+            return new ArrayList<>();
         }
     }
 
@@ -134,7 +140,7 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
      * @param bill
      * @param amount
      */
-    private void switchCheckBillTypeAndInsertBanknote(Bill bill, long amount) {
+    private void renewAmountOfMoneyForParticularBillInAtm(Bill bill, long amount) {
 
         this.money.put(bill, amount);
 
