@@ -14,34 +14,8 @@ public class Main {
 
     public static void main(String... args) throws Exception {
 
-//        AutomatedTellerMachine atm = new AutomatedTellerMachineImpl(1, 1,
-//                1, 1, 1);
-//        System.out.println(atm);
-//        System.out.println(atm.getSumOfAllBanknotesInAtm());
-
-        // Определяем сколько купюр и какого номинала достаем из штанин.
-//        List<BanknoteTupleHelper> banknoteTupleHelperList = new ArrayList<>();
-//        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.TEN, 2));
-//        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.FIFTY, 2));
-//        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.HUNDRED, 2));
-//        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.FIVE_HUNDRED, 2));
-//        banknoteTupleHelperList.add(new BanknoteTupleHelper(Bill.THOUSAND, 2));
-
-//        List<Banknote> clientBanknotes = AutomatedTellerMachineImpl.cashPopulationHelper(banknoteTupleHelperList);
-
-        // Проверка метода putMoney
-//        atm.putMoney(clientBanknotes);
-
-//        System.out.println(atm);
-//        System.out.println(atm.getSumOfAllBanknotesInAtm());
-
-//        List<Banknote> claimedMoney = atm.claimMoney(3180);
-//        System.out.println(claimedMoney);
-//
-//        System.out.println(atm);
-
         AutomatedTellerMachine atm2 =
-                new AutomatedTellerMachineImpl().newBuilder().setBanknoteFiftyRub(10).setBanknoteTenRub(10)
+                new AutomatedTellerMachineImpl().newBuilder().setBanknoteFiftyRub(1).setBanknoteTenRub(1)
                         .setBanknoteHundredRub(10).setBanknoteFiveHundredRub(10).setBanknoteThousandRub(10).build();
         System.out.println(atm2);
 
@@ -59,7 +33,7 @@ public class Main {
         atm2.putMoney(ban);
         System.out.println(atm2);
 
-        List<Banknote> claimed = atm2.claimMoney(5600L);
+        List<Banknote> claimed = atm2.claimMoney(10690L);
         System.out.println(atm2);
         System.out.println(claimed);
 
