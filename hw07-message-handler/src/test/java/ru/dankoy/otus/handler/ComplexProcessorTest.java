@@ -24,7 +24,7 @@ class ComplexProcessorTest {
 
     @Test
     @DisplayName("Тестируем вызовы процессоров")
-    void handleProcessorsTest() {
+    void handleProcessorsTest() throws Exception {
         //given
         var message = new Message.Builder().field7("field7").build();
 
@@ -50,7 +50,7 @@ class ComplexProcessorTest {
 
     @Test
     @DisplayName("Тестируем обработку исключения")
-    void handleExceptionTest() {
+    void handleExceptionTest() throws Exception {
         //given
         var message = new Message.Builder().field8("field8").build();
 
