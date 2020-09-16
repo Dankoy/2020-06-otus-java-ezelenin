@@ -1,5 +1,14 @@
 package ru.dankoy.otus.messagehandler;
 
+import ru.dankoy.otus.messagehandler.handler.ComplexProcessor;
+import ru.dankoy.otus.messagehandler.listener.ListenerPrinter;
+import ru.dankoy.otus.messagehandler.processor.LoggerProcessor;
+import ru.dankoy.otus.messagehandler.processor.ProcessorConcatFields;
+import ru.dankoy.otus.messagehandler.processor.ProcessorProxy;
+import ru.dankoy.otus.messagehandler.processor.ProcessorUpperField10;
+
+import java.util.List;
+
 public class HomeWork {
 
     /*
@@ -15,5 +24,28 @@ public class HomeWork {
            по аналогии с Demo.class
            из элеменов "to do" создать new ComplexProcessor и обработать сообщение
          */
+
+        var processors = List.of(new ProcessorConcatFields(),
+                new LoggerProcessor(new ProcessorUpperField10()), new ProcessorProxy(new ProcessorUpperField10()));
+
+        var complexProcessor = new ComplexProcessor(processors, ex -> {
+        });
+        var listenerPrinter = new ListenerPrinter();
+        complexProcessor.addListener(listenerPrinter);
+
+        var message = new Message.Builder()
+                .field1("field1")
+                .field2("field2")
+                .field3("field3")
+                .field6("field6")
+                .field10("field10")
+                .field11("field11")
+                .field13("field13")
+                .build();
+
+        var result = complexProcessor.handle(message);
+        System.out.println("result:" + result);
+
+        complexProcessor.removeListener(listenerPrinter);
     }
 }
