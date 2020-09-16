@@ -90,15 +90,9 @@ public class AutomatedTellerMachineImpl implements AutomatedTellerMachine {
             }
         }
 
-        try {
+        checkIfThereAreEnoughRequestedBanknotes(moneyHelper);
+        return cashPopulationHelper(moneyHelper);
 
-            checkIfThereAreEnoughRequestedBanknotes(moneyHelper);
-            return cashPopulationHelper(moneyHelper);
-
-        } catch (NotEnoughBanknotesException e) {
-            LOGGER.error("Atm doesn't have enough money. Please try again later.");
-            return new ArrayList<>();
-        }
     }
 
     /**
