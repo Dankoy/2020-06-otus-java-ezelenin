@@ -20,7 +20,12 @@ public class Serializer {
 
     public String serializeObject(Object object) throws IOException {
 
-        buildJson(object);
+        if (object != null) {
+            buildJson(object);
+        } else {
+            return null;
+        }
+
 
         return getJsonStringFromJsonObjectBuilder(objectBuilder);
     }
