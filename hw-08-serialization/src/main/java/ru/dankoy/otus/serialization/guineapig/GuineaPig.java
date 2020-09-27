@@ -9,6 +9,7 @@ public class GuineaPig {
     private int age;
     private List<String> someList;
     private List<Integer> someList2;
+    private List<?> someList3;
     private Map<String, Integer> someMap;
     private boolean bool;
     private Boolean bool2;
@@ -41,6 +42,11 @@ public class GuineaPig {
 
         public GuineaPigBuilder setSomeList2(List<Integer> list) {
             GuineaPig.this.someList2 = list;
+            return this;
+        }
+
+        public GuineaPigBuilder setSomeList3(List<?> list) {
+            GuineaPig.this.someList3 = list;
             return this;
         }
 
