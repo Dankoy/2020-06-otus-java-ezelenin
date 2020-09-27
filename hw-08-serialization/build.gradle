@@ -8,6 +8,7 @@ targetCompatibility = JavaVersion.VERSION_14
 
 dependencies {
     implementation 'com.google.guava:guava'
+    implementation 'com.google.code.gson:gson'
     implementation 'javax.json:javax.json-api'
     implementation 'org.glassfish:javax.json'
     testImplementation("org.junit.jupiter:junit-jupiter-api")
