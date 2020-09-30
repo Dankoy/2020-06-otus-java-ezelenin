@@ -8,9 +8,8 @@ import ru.dankoy.otus.core.model.User;
 import ru.dankoy.otus.core.service.DbServiceUserImpl;
 import ru.dankoy.otus.h2.DataSourceH2;
 import ru.dankoy.otus.jdbc.DbExecutorImpl;
-import ru.dankoy.otus.jdbc.mapper.EntityClassMetaData;
-import ru.dankoy.otus.jdbc.mapper.EntityClassMetaDataImpl;
-import ru.dankoy.otus.jdbc.mapper.JdbcMapper;
+import ru.dankoy.otus.jdbc.dao.UserDaoJdbcMapper;
+import ru.dankoy.otus.jdbc.mapper.*;
 import ru.dankoy.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
 import javax.sql.DataSource;
@@ -29,10 +28,16 @@ public class HomeWork {
         EntityClassMetaData entityClassMetaData = new EntityClassMetaDataImpl(new User(1,"23"));
         System.out.println(entityClassMetaData);
 
+        EntitySQLMetaData entitySQLMetaData = new EntitySQLMetaDataImpl(entityClassMetaData);
+        System.out.println(entitySQLMetaData.getSelectAllSql());
+        System.out.println(entitySQLMetaData.getSelectByIdSql());
+        System.out.println(entitySQLMetaData.getInsertSql());
+
 // Работа с пользователем
         DbExecutorImpl<User> dbExecutor = new DbExecutorImpl<>();
         JdbcMapper<User> jdbcMapperUser = null; //
-        UserDao userDao = null; // = new UserDaoJdbcMapper(sessionManager, dbExecutor);
+//        UserDao userDao = null; // = new UserDaoJdbcMapper(sessionManager, dbExecutor);
+        UserDao userDao = new UserDaoJdbcMapper(sessionManager, new JdbcMapperImpl());
 
 // Код дальше должен остаться, т.е. userDao должен использоваться
         var dbServiceUser = new DbServiceUserImpl(userDao);
