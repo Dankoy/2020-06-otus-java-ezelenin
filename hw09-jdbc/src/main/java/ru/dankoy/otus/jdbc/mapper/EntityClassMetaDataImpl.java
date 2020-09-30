@@ -108,7 +108,7 @@ public class EntityClassMetaDataImpl implements EntityClassMetaData {
 
     private void parseClassName() {
 
-        this.className = this.clazz.getName();
+        this.className = this.clazz.getSimpleName();
 
     }
 
