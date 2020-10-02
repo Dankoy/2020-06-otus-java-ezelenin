@@ -14,15 +14,30 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
     @Override
     public String getSelectAllSql() {
 
-        return createSimpleSqlSelectAllFromTable().append(";").toString();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder
+                .append("select ")
+                .append(makeFieldNamesStringWithComma(entityClassMetaData.getAllFields()))
+                .append(" from ")
+                .append(getTableName().toLowerCase());
+
+        return stringBuilder.toString();
     }
 
     @Override
     public String getSelectByIdSql() {
 
-        StringBuilder stringBuilder = createSimpleSqlSelectAllFromTable();
+        StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(" where ").append(entityClassMetaData.getIdField().getName()).append(" == (?);");
+        stringBuilder
+                .append("select ")
+                .append(makeFieldNamesStringWithComma(entityClassMetaData.getAllFields()))
+                .append(" from ")
+                .append(getTableName().toLowerCase())
+                .append(" where ")
+                .append(entityClassMetaData.getIdField().getName())
+                .append(" == (?)");
 
         return stringBuilder.toString();
     }
@@ -31,8 +46,13 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
     public String getInsertSql() {
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("insert into (").append(entityClassMetaData.getName().toLowerCase())
-                .append(") values (?);");
+        stringBuilder
+                .append("insert into ")
+                .append(getTableName().toLowerCase())
+                .append("(")
+                .append(makeFieldNamesStringWithComma(entityClassMetaData.getFieldsWithoutId()))
+                .append(") values ")
+                .append(makeQuestionMarks(entityClassMetaData.getFieldsWithoutId()));
 
         return stringBuilder.toString();
     }
@@ -42,28 +62,56 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
         return null;
     }
 
-    private StringBuilder createSimpleSqlSelectAllFromTable() {
+    private String getTableName() {
 
-        List<Field> fields = entityClassMetaData.getAllFields();
+        String tableName = entityClassMetaData.getName();
+        return tableName.substring(tableName.lastIndexOf(".") + 1);
+
+    }
+
+    /**
+     * Получение строки с именами полей объекта через запятую.
+     * При передачи списка всех полей - генерирует строку для метода getSelectAllSql()
+     * При передачи списка полей без аннотации id - генерирует строку для метода getInsertSql()
+     *
+     * @param fields
+     * @return
+     */
+    private String makeFieldNamesStringWithComma(List<Field> fields) {
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("select ");
 
         for (Field field : fields) {
-
             String fieldName = field.getName();
             stringBuilder.append(fieldName);
 
             if (fields.indexOf(field) != fields.size() - 1)
                 stringBuilder.append(", ");
-            else
-                stringBuilder.append(" ");
         }
+        return stringBuilder.toString();
+    }
 
-        String tableName = entityClassMetaData.getName();
-        stringBuilder.append("from ").append(tableName.toLowerCase());
+    /**
+     * Получение строки с вопросиками в завсимости от количества полей без аннотации id
+     *
+     * @param fields
+     * @return
+     */
+    private String makeQuestionMarks(List<Field> fields) {
 
-        return stringBuilder;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("(");
+
+        for (Field field : fields) {
+            stringBuilder.append("?");
+
+            if (fields.indexOf(field) != fields.size() - 1)
+                stringBuilder.append(", ");
+        }
+        stringBuilder.append(")");
+
+        return stringBuilder.toString();
+
     }
 
 }
