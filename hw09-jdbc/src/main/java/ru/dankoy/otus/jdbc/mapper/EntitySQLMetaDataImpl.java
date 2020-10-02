@@ -37,7 +37,7 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
                 .append(getTableName().toLowerCase())
                 .append(" where ")
                 .append(entityClassMetaData.getIdField().getName())
-                .append(" == (?)");
+                .append(" = ?");
 
         return stringBuilder.toString();
     }
