@@ -1,5 +1,7 @@
 package ru.dankoy.otus.jdbc.mapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.dankoy.otus.jdbc.DbExecutor;
 import ru.dankoy.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
@@ -10,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcMapperImpl<T> implements JdbcMapper<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(JdbcMapperImpl.class);
 
     private final DbExecutor<T> dbExecutor;
     private final SessionManagerJdbc sessionManager;
@@ -27,16 +31,12 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     @Override
     public void insert(Object objectData) {
 
-        String className = entityClassMetaData.getName();
-
         try {
             List<Object> fieldWithoutIdValues = getFieldsWithoutIdValues(objectData);
 
-            var obj = Class.forName(className).cast(objectData);
-            System.out.println(obj.getClass());
             dbExecutor.executeInsert(getConnection(), entitySQLMetaData.getInsertSql(),
                     fieldWithoutIdValues);
-        } catch (ClassNotFoundException | SQLException | IllegalAccessException ex) {
+        } catch (SQLException | IllegalAccessException ex) {
             ex.printStackTrace();
         }
 
@@ -52,8 +52,28 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
 
     }
 
+    // TODO: Сделать универсальный хэндлер
     @Override
     public Object findById(Object id, Class clazz) {
+
+        try {
+
+            System.out.println(entitySQLMetaData.getSelectByIdSql());
+            dbExecutor.executeSelect(getConnection(), entitySQLMetaData.getSelectByIdSql(),
+                    id, rs -> {
+                        try {
+                            if (rs.next()) {
+                                System.out.println(rs.toString());
+//                                return new User(rs.getLong("id"), rs.getString("name"));
+                            }
+                        } catch (SQLException e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                        return null;
+                    });
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
 
         return null;
     }
