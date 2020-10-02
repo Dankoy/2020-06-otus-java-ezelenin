@@ -7,9 +7,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EntityClassMetaDataImpl implements EntityClassMetaData {
+public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
-    private Object object;
     private Class<?> clazz;
     private String className;
     private List<Field> fieldsWithoutId;
@@ -21,7 +20,6 @@ public class EntityClassMetaDataImpl implements EntityClassMetaData {
     @Override
     public String toString() {
         return "EntityClassMetaDataImpl{" +
-                "object=" + object +
                 ", clazz=" + clazz +
                 ", className='" + className + '\'' +
                 ", fieldsWithoutId=" + fieldsWithoutId +
@@ -31,9 +29,8 @@ public class EntityClassMetaDataImpl implements EntityClassMetaData {
                 '}';
     }
 
-    public EntityClassMetaDataImpl(Object object) {
-        this.object = object;
-        this.clazz = object.getClass();
+    public EntityClassMetaDataImpl(Class<?> clazz) {
+        this.clazz = clazz;
 
         parseObjectConstructor();
         parseObjectFields();
@@ -108,7 +105,7 @@ public class EntityClassMetaDataImpl implements EntityClassMetaData {
 
     private void parseClassName() {
 
-        this.className = this.clazz.getSimpleName();
+        this.className = this.clazz.getName();
 
     }
 
