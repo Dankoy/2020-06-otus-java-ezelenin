@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * created on 03.02.19.
  */
 public class DataSourceH2 implements DataSource {
-    private static final String URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+    private static final String URL = "jdbc:h2:~/test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE";
 
     @Override
     public Connection getConnection() throws SQLException {
