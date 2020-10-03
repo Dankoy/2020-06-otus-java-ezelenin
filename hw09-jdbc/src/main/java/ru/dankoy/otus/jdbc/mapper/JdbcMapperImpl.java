@@ -31,17 +31,17 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     }
 
     @Override
-    public void insert(Object objectData) {
+    public long insert(Object objectData) {
 
         try {
             List<Object> fieldWithoutIdValues = getFieldsWithoutIdValues(objectData);
 
-            dbExecutor.executeInsert(getConnection(), entitySQLMetaData.getInsertSql(),
+            return dbExecutor.executeInsert(getConnection(), entitySQLMetaData.getInsertSql(),
                     fieldWithoutIdValues);
         } catch (SQLException | IllegalAccessException ex) {
             ex.printStackTrace();
         }
-
+        return -1;
     }
 
     @Override
@@ -62,7 +62,6 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
 
         try {
 
-            System.out.println(entitySQLMetaData.getSelectByIdSql());
             dbExecutor.executeSelect(getConnection(), entitySQLMetaData.getSelectByIdSql(),
                     id, rs -> {
                         try {
@@ -85,7 +84,6 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                         } catch (SQLException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                             logger.error(e.getMessage(), e);
                         }
-                        System.out.println("null");
                         return null;
                     });
         } catch (SQLException ex) {
