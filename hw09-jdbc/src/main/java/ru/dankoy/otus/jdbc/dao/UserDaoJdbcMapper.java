@@ -31,12 +31,11 @@ public class UserDaoJdbcMapper implements UserDao {
     public long insertUser(User user) {
 
         try {
-            jdbcMapper.insert(user);
+            return jdbcMapper.insert(user);
         } catch (Exception e) {
             throw new UserDaoException(e);
         }
 
-        return user.getId();
     }
 
     @Override
