@@ -59,7 +59,18 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     @Override
     public String getUpdateSql() {
-        return null;
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder
+                .append("update ")
+                .append(getTableName().toLowerCase())
+                .append(" set ")
+                .append(makeSqlForUpdate(this.entityClassMetaData.getFieldsWithoutId()))
+                .append(" where ")
+                .append(this.entityClassMetaData.getIdField().getName())
+                .append("= ?");
+
+        return stringBuilder.toString();
     }
 
     private String getTableName() {
@@ -112,6 +123,21 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
         return stringBuilder.toString();
 
+    }
+
+    private String makeSqlForUpdate(List<Field> fields) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Field field : fields) {
+            stringBuilder
+                    .append(field.getName())
+                    .append("=?");
+
+            if (fields.indexOf(field) != fields.size() - 1)
+                stringBuilder.append(", ");
+        }
+
+        return stringBuilder.toString();
     }
 
 }
