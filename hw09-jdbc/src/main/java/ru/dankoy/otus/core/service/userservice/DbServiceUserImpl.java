@@ -1,9 +1,10 @@
-package ru.dankoy.otus.core.service;
+package ru.dankoy.otus.core.service.userservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.dankoy.otus.core.dao.UserDao;
 import ru.dankoy.otus.core.model.User;
+import ru.dankoy.otus.core.service.DbServiceException;
 
 import java.util.Optional;
 

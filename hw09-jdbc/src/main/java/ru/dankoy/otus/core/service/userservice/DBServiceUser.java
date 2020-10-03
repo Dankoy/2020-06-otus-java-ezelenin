@@ -1,4 +1,4 @@
-package ru.dankoy.otus.core.service;
+package ru.dankoy.otus.core.service.userservice;
 
 import ru.dankoy.otus.core.model.User;
 
