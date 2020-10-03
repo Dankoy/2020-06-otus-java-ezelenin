@@ -8,7 +8,6 @@ import ru.dankoy.otus.core.model.User;
 import ru.dankoy.otus.core.service.DbServiceUserImpl;
 import ru.dankoy.otus.h2.DataSourceH2;
 import ru.dankoy.otus.jdbc.DbExecutorImpl;
-import ru.dankoy.otus.jdbc.dao.UserDaoJdbc;
 import ru.dankoy.otus.jdbc.dao.UserDaoJdbcMapper;
 import ru.dankoy.otus.jdbc.mapper.*;
 import ru.dankoy.otus.jdbc.sessionmanager.SessionManagerJdbc;
