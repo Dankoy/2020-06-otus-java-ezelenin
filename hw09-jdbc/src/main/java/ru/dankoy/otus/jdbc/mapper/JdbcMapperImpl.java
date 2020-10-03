@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import ru.dankoy.otus.jdbc.DbExecutor;
 import ru.dankoy.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,9 +54,11 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
 
     }
 
-    // TODO: Сделать универсальный хэндлер
     @Override
     public Object findById(Object id, Class clazz) {
+
+        Constructor<T> constructor = entityClassMetaData.getConstructor();
+        List<Field> fields = entityClassMetaData.getAllFields();
 
         try {
 
@@ -63,12 +67,25 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                     id, rs -> {
                         try {
                             if (rs.next()) {
-                                System.out.println(rs.toString());
-//                                return new User(rs.getLong("id"), rs.getString("name"));
+                                T object = constructor.newInstance();
+
+                                fields.forEach(field -> {
+                                    try {
+                                        field.setAccessible(true);
+                                        field.set(object, rs.getObject(field.getName()));
+                                    } catch (SQLException throwables) {
+                                        throwables.printStackTrace();
+                                    } catch (IllegalAccessException e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+                                System.out.println(object);
+                                return object;
                             }
-                        } catch (SQLException e) {
+                        } catch (SQLException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                             logger.error(e.getMessage(), e);
                         }
+                        System.out.println("null");
                         return null;
                     });
         } catch (SQLException ex) {
