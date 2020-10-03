@@ -14,7 +14,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     private List<Field> fieldsWithoutId;
     private List<Field> allFields;
     private Field fieldWithId;
-    private Constructor constructor;
+    private Constructor<T> constructor;
 
 
     @Override
@@ -68,8 +68,13 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
      * Принимаем заданность, что конструктор только один
      */
     private void parseObjectConstructor() {
-        Constructor[] constructors = this.clazz.getConstructors();
-        this.constructor = constructors[0];
+        try {
+            Constructor<T> constructor = (Constructor<T>) this.clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            this.constructor = constructor;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -97,7 +102,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
      */
     private void parseFieldsWithoutId() {
 
-        this.fieldsWithoutId  = this.allFields.stream().filter(field -> {
+        this.fieldsWithoutId = this.allFields.stream().filter(field -> {
             return field.getAnnotation(Id.class) == null;
         }).collect(Collectors.toList());
 
