@@ -39,7 +39,7 @@ public class HomeWork {
 
 // Код дальше должен остаться, т.е. userDao должен использоваться
         var dbServiceUser = new DbServiceUserImpl(userDao);
-        var id = dbServiceUser.saveUser(new User(1, "dbServiceUser"));
+        var id = dbServiceUser.saveUser(new User(1, "dbServiceUser", 2));
         Optional<User> user = dbServiceUser.getUser(id);
 
         user.ifPresentOrElse(
