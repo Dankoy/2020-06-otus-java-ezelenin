@@ -3,35 +3,40 @@ package ru.dankoy.otus;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.dankoy.otus.core.dao.AccountDao;
 import ru.dankoy.otus.core.dao.UserDao;
+import ru.dankoy.otus.core.model.Account;
 import ru.dankoy.otus.core.model.User;
-import ru.dankoy.otus.core.service.DbServiceUserImpl;
+import ru.dankoy.otus.core.service.accountservice.DbServiceAccountImpl;
+import ru.dankoy.otus.core.service.userservice.DbServiceUserImpl;
 import ru.dankoy.otus.h2.DataSourceH2;
 import ru.dankoy.otus.jdbc.DbExecutorImpl;
+import ru.dankoy.otus.jdbc.dao.AccountDaoJdbcMapper;
 import ru.dankoy.otus.jdbc.dao.UserDaoJdbcMapper;
 import ru.dankoy.otus.jdbc.mapper.*;
 import ru.dankoy.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 
 public class HomeWork {
     private static final Logger logger = LoggerFactory.getLogger(HomeWork.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 // Общая часть
         var dataSource = new DataSourceH2();
         flywayMigrations(dataSource);
         var sessionManager = new SessionManagerJdbc(dataSource);
 
-        EntityClassMetaData<User> entityClassMetaData = new EntityClassMetaDataImpl<>(User.class);
-
-        EntitySQLMetaData entitySQLMetaData = new EntitySQLMetaDataImpl(entityClassMetaData);
+        EntityClassMetaData<User> userClassMetaData = new EntityClassMetaDataImpl<>(User.class);
+        EntitySQLMetaData userSQLMetaData = new EntitySQLMetaDataImpl(userClassMetaData);
+        System.out.println(userSQLMetaData.getInsertSql());
 
 // Работа с пользователем
         DbExecutorImpl<User> dbExecutor = new DbExecutorImpl<>();
-        JdbcMapper<User> jdbcMapperUser = new JdbcMapperImpl(dbExecutor, entityClassMetaData, sessionManager); //
+        JdbcMapper<User> jdbcMapperUser = new JdbcMapperImpl(dbExecutor, userClassMetaData, sessionManager); //
 //        UserDao userDao = null; // = new UserDaoJdbcMapper(sessionManager, dbExecutor);
         UserDao userDao = new UserDaoJdbcMapper(sessionManager, jdbcMapperUser);
 //        UserDao userDao = new UserDaoJdbc(sessionManager, dbExecutor);
@@ -46,6 +51,21 @@ public class HomeWork {
                 () -> logger.info("user was not created")
         );
 // Работа со счетом
+
+        EntityClassMetaData<Account> accountClassMetaData = new EntityClassMetaDataImpl<>(Account.class);
+        EntitySQLMetaData accountSQLMetaData = new EntitySQLMetaDataImpl(accountClassMetaData);
+
+        JdbcMapper<Account> jdbcMapperAccount = new JdbcMapperImpl(dbExecutor, accountClassMetaData, sessionManager);
+        AccountDao accountDao = new AccountDaoJdbcMapper(sessionManager, jdbcMapperAccount);
+
+        var dbServiceAccount = new DbServiceAccountImpl(accountDao);
+        var no = dbServiceAccount.saveAccount(new Account(1234, "account", BigDecimal.valueOf(23)));
+        Optional<Account> account = dbServiceAccount.getAccount(no);
+
+        account.ifPresentOrElse(
+                crAccount -> logger.info("created account, name:{}", crAccount.getNo()),
+                () -> logger.info("account was not created")
+        );
 
 
     }
