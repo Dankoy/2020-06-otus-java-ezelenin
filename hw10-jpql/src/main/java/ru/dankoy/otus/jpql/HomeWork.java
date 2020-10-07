@@ -3,14 +3,20 @@ package ru.dankoy.otus.jpql;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.dankoy.otus.jpql.core.dao.AddressDataSetDao;
+import ru.dankoy.otus.jpql.core.dao.PhoneDataSetDao;
+import ru.dankoy.otus.jpql.core.dao.UserDao;
 import ru.dankoy.otus.jpql.core.model.AddressDataSet;
 import ru.dankoy.otus.jpql.core.model.PhoneDataSet;
 import ru.dankoy.otus.jpql.core.model.User;
-import ru.dankoy.otus.jpql.core.sessionmanager.SessionManager;
-import ru.dankoy.otus.jpql.flyway.MigrationsExecutor;
-import ru.dankoy.otus.jpql.flyway.MigrationsExecutorFlyway;
+import ru.dankoy.otus.jpql.hibernate.dao.AddressDataSetDaoHibernate;
+import ru.dankoy.otus.jpql.hibernate.dao.PhoneDataSetDaoHibernate;
+import ru.dankoy.otus.jpql.hibernate.dao.UserDaoHibernate;
 import ru.dankoy.otus.jpql.hibernate.sessionmanager.SessionManagerHibernate;
 import ru.dankoy.otus.jpql.hibernate.utils.HibernateUtils;
+
+import java.util.List;
+import java.util.Optional;
 
 
 public class HomeWork {
@@ -20,16 +26,120 @@ public class HomeWork {
 
     public static void main(String[] args) {
 
-//        MigrationsExecutor migrationsExecutor = new MigrationsExecutorFlyway(HIBERNATE_CFG_FILE);
-//        migrationsExecutor.cleanDb();
-//        migrationsExecutor.executeMigrations();
+        SessionManagerHibernate sessionManagerHibernate = getSessionManager();
 
+        var userId = insertUser(sessionManagerHibernate);
 
-        SessionFactory sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_FILE, User.class,
-                AddressDataSet.class, PhoneDataSet.class);
-        SessionManager sessionManager = new SessionManagerHibernate(sessionFactory);
-
+        updateAddress(sessionManagerHibernate, userId);
+        updatePhone(sessionManagerHibernate, userId);
 
 
     }
+
+
+    /**
+     * обавление нового телефона к юзеру
+     *
+     * @param sessionManagerHibernate
+     * @param userId
+     */
+    private static void updatePhone(SessionManagerHibernate sessionManagerHibernate, long userId) {
+
+        sessionManagerHibernate.beginSession();
+
+        UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
+
+        // Получение юзера из базы
+        Optional<User> foundUser = userDao.findById(userId);
+
+        var phones = foundUser.get().getPhoneDataSets();
+
+        PhoneDataSet newPhone = new PhoneDataSet("new phone");
+        newPhone.setUser(foundUser.get());
+
+        phones.add(newPhone);
+
+        PhoneDataSetDao phoneDataSetDao = new PhoneDataSetDaoHibernate(sessionManagerHibernate);
+
+        phoneDataSetDao.insertPhone(newPhone);
+
+        sessionManagerHibernate.commitSession();
+
+    }
+
+    /**
+     * Обновление адреса у существующего юзера
+     *
+     * @param sessionManagerHibernate
+     * @param userId
+     */
+    private static void updateAddress(SessionManagerHibernate sessionManagerHibernate, long userId) {
+
+        sessionManagerHibernate.beginSession();
+
+        UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
+
+        // Получение юзера из базы
+        Optional<User> foundUser = userDao.findById(userId);
+
+        var address = foundUser.get().getAddress();
+
+        address.setStreet("updated street");
+
+        AddressDataSetDao addressDataSetDao = new AddressDataSetDaoHibernate(sessionManagerHibernate);
+
+        addressDataSetDao.updateAddress(address);
+
+        sessionManagerHibernate.commitSession();
+
+    }
+
+    /**
+     * Запись юзера в базу и получение записанного юзера из базы
+     *
+     * @param sessionManagerHibernate
+     */
+    private static long insertUser(SessionManagerHibernate sessionManagerHibernate) {
+
+        sessionManagerHibernate.beginSession();
+
+        UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
+
+        // Запись юзера в базу
+        List<PhoneDataSet> phoneDataSets = List.of(new PhoneDataSet("phone1"), new PhoneDataSet("phone2"),
+                new PhoneDataSet("phone3"));
+        AddressDataSet addressDataSet = new AddressDataSet("nice address");
+        User newUser = new User("name", 12, addressDataSet, phoneDataSets);
+        addressDataSet.setUser(newUser);
+        phoneDataSets.forEach(phone -> phone.setUser(newUser));
+
+
+        var userId = userDao.insertUser(newUser);
+
+        logger.info("-------------------------------- ");
+
+        // Получение юзера из базы
+        Optional<User> foundUser = userDao.findById(userId);
+        foundUser.ifPresentOrElse(
+                crUser -> logger.info("Found user, name:{}", crUser.getName()),
+                () -> logger.info("user was not found")
+        );
+
+        sessionManagerHibernate.commitSession();
+
+        return userId;
+
+    }
+
+    /**
+     * Получение менеджера сессий hibernate
+     *
+     * @return
+     */
+    private static SessionManagerHibernate getSessionManager() {
+        SessionFactory sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_FILE, User.class,
+                AddressDataSet.class, PhoneDataSet.class);
+        return new SessionManagerHibernate(sessionFactory);
+    }
+
 }
