@@ -52,18 +52,20 @@ public class HomeWork {
         // Получение юзера из базы
         Optional<User> foundUser = userDao.findById(userId);
 
-        var phones = foundUser.get().getPhoneDataSets();
+        if (foundUser.isPresent()) {
+            var phones = foundUser.get().getPhoneDataSets();
 
-        PhoneDataSet newPhone = new PhoneDataSet("new phone");
-        newPhone.setUser(foundUser.get());
+            PhoneDataSet newPhone = new PhoneDataSet("new phone");
+            newPhone.setUser(foundUser.get());
 
-        phones.add(newPhone);
+            phones.add(newPhone);
 
-        PhoneDataSetDao phoneDataSetDao = new PhoneDataSetDaoHibernate(sessionManagerHibernate);
+            PhoneDataSetDao phoneDataSetDao = new PhoneDataSetDaoHibernate(sessionManagerHibernate);
 
-        phoneDataSetDao.insertPhone(newPhone);
+            phoneDataSetDao.insertPhone(newPhone);
 
-        sessionManagerHibernate.commitSession();
+            sessionManagerHibernate.commitSession();
+        }
 
     }
 
@@ -82,15 +84,17 @@ public class HomeWork {
         // Получение юзера из базы
         Optional<User> foundUser = userDao.findById(userId);
 
-        var address = foundUser.get().getAddress();
+        if (foundUser.isPresent()) {
+            var address = foundUser.get().getAddress();
 
-        address.setStreet("updated street");
+            address.setStreet("updated street");
 
-        AddressDataSetDao addressDataSetDao = new AddressDataSetDaoHibernate(sessionManagerHibernate);
+            AddressDataSetDao addressDataSetDao = new AddressDataSetDaoHibernate(sessionManagerHibernate);
 
-        addressDataSetDao.updateAddress(address);
+            addressDataSetDao.updateAddress(address);
 
-        sessionManagerHibernate.commitSession();
+            sessionManagerHibernate.commitSession();
+        }
 
     }
 
