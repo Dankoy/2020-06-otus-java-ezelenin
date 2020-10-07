@@ -44,6 +44,9 @@ public class HomeWork {
 // Код дальше должен остаться, т.е. userDao должен использоваться
         var dbServiceUser = new DbServiceUserImpl(userDao);
         var id = dbServiceUser.saveUser(new User(1, "dbServiceUser", 2));
+        logger.info("Saved user id: {}" , id);
+
+        logger.info("Trying to get user by Id: {}" , id);
         Optional<User> user = dbServiceUser.getUser(id);
 
         user.ifPresentOrElse(
@@ -60,6 +63,9 @@ public class HomeWork {
 
         var dbServiceAccount = new DbServiceAccountImpl(accountDao);
         var no = dbServiceAccount.saveAccount(new Account(1234, "account", BigDecimal.valueOf(23)));
+        logger.info("Saved accound id: {}" , no);
+
+        logger.info("Trying to get accound by Id: {}" , no);
         Optional<Account> account = dbServiceAccount.getAccount(no);
 
         account.ifPresentOrElse(
