@@ -64,6 +64,22 @@ public class User {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setAddress(AddressDataSet address) {
+        this.address = address;
+    }
+
+    public void setPhoneDataSets(List<PhoneDataSet> phoneDataSets) {
+        this.phoneDataSets = phoneDataSets;
+    }
+
     public AddressDataSet getAddress() {
         return address;
     }
