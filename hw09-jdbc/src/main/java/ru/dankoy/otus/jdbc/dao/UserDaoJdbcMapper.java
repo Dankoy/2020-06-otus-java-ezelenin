@@ -22,9 +22,7 @@ public class UserDaoJdbcMapper implements UserDao {
     @Override
     public Optional<User> findById(long id) {
 
-        Optional<User> user = Optional.ofNullable(jdbcMapper.findById(id, User.class));
-
-        return user;
+        return jdbcMapper.findById(id, User.class);
     }
 
     @Override

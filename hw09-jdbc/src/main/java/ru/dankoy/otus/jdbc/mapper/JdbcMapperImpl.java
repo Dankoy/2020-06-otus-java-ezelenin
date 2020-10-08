@@ -9,9 +9,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JdbcMapperImpl<T> implements JdbcMapper<T> {
 
@@ -55,33 +57,17 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     }
 
     @Override
-    public Object findById(Object id, Class clazz) {
-
-        Constructor<T> constructor = entityClassMetaData.getConstructor();
-        List<Field> fields = entityClassMetaData.getAllFields();
+    public Optional<T> findById(Object id, Class clazz) {
 
         try {
 
-            dbExecutor.executeSelect(getConnection(), entitySQLMetaData.getSelectByIdSql(),
+            return dbExecutor.executeSelect(getConnection(), entitySQLMetaData.getSelectByIdSql(),
                     id, rs -> {
                         try {
                             if (rs.next()) {
-                                T object = constructor.newInstance();
-
-                                fields.forEach(field -> {
-                                    try {
-                                        field.setAccessible(true);
-                                        field.set(object, rs.getObject(field.getName()));
-                                    } catch (SQLException throwables) {
-                                        throwables.printStackTrace();
-                                    } catch (IllegalAccessException e) {
-                                        e.printStackTrace();
-                                    }
-                                });
-                                System.out.println(object);
-                                return object;
+                                return getResult(rs);
                             }
-                        } catch (SQLException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                        } catch (SQLException e) {
                             logger.error(e.getMessage(), e);
                         }
                         return null;
@@ -114,6 +100,47 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
             result.add(field.get(objectData));
         }
         return result;
+    }
+
+
+    /**
+     * Парсинг рещультата полученного из бд
+     *
+     * @param rs
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     */
+    private T getResult(ResultSet rs) {
+
+        Constructor<T> constructor = entityClassMetaData.getConstructor();
+        List<Field> fields = entityClassMetaData.getAllFields();
+
+        T object = null;
+
+        try {
+            object = constructor.newInstance();
+
+            T finalObject = object;
+            fields.forEach(field -> {
+                try {
+                    field.setAccessible(true);
+                    field.set(finalObject, rs.getObject(field.getName()));
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            });
+            logger.info("Object: {}", object);
+            return object;
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        return object;
+
     }
 
 }

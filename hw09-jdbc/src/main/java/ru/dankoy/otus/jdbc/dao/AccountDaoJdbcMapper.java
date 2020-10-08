@@ -22,9 +22,7 @@ public class AccountDaoJdbcMapper implements AccountDao {
     @Override
     public Optional<Account> findById(long id) {
 
-        Optional<Account> account = Optional.ofNullable(jdbcMapper.findById(id, Account.class));
-
-        return account;
+        return jdbcMapper.findById(id, Account.class);
     }
 
     @Override

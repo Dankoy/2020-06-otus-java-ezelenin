@@ -1,7 +1,10 @@
 package ru.dankoy.otus.jdbc.mapper;
 
+import java.util.Optional;
+
 /**
  * Сохратяет объект в базу, читает объект из базы
+ *
  * @param <T>
  */
 public interface JdbcMapper<T> {
@@ -11,5 +14,5 @@ public interface JdbcMapper<T> {
 
     void insertOrUpdate(T objectData);
 
-    T findById(Object id, Class<T> clazz);
+    Optional<T> findById(Object id, Class<T> clazz);
 }
