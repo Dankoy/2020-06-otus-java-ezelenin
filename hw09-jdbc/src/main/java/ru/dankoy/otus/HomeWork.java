@@ -24,7 +24,7 @@ import java.util.Optional;
 public class HomeWork {
     private static final Logger logger = LoggerFactory.getLogger(HomeWork.class);
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 // Общая часть
         var dataSource = new DataSourceH2();
         flywayMigrations(dataSource);
@@ -32,21 +32,18 @@ public class HomeWork {
 
         EntityClassMetaData<User> userClassMetaData = new EntityClassMetaDataImpl<>(User.class);
         EntitySQLMetaData userSQLMetaData = new EntitySQLMetaDataImpl(userClassMetaData);
-        System.out.println(userSQLMetaData.getInsertSql());
 
 // Работа с пользователем
         DbExecutorImpl<User> dbExecutor = new DbExecutorImpl<>();
         JdbcMapper<User> jdbcMapperUser = new JdbcMapperImpl(dbExecutor, userClassMetaData, sessionManager); //
-//        UserDao userDao = null; // = new UserDaoJdbcMapper(sessionManager, dbExecutor);
         UserDao userDao = new UserDaoJdbcMapper(sessionManager, jdbcMapperUser);
-//        UserDao userDao = new UserDaoJdbc(sessionManager, dbExecutor);
 
 // Код дальше должен остаться, т.е. userDao должен использоваться
         var dbServiceUser = new DbServiceUserImpl(userDao);
         var id = dbServiceUser.saveUser(new User(1, "dbServiceUser", 2));
-        logger.info("Saved user id: {}" , id);
+        logger.info("Saved user id: {}", id);
 
-        logger.info("Trying to get user by Id: {}" , id);
+        logger.info("Trying to get user by Id: {}", id);
         Optional<User> user = dbServiceUser.getUser(id);
 
         user.ifPresentOrElse(
@@ -63,9 +60,9 @@ public class HomeWork {
 
         var dbServiceAccount = new DbServiceAccountImpl(accountDao);
         var no = dbServiceAccount.saveAccount(new Account(1234, "account", BigDecimal.valueOf(23)));
-        logger.info("Saved accound id: {}" , no);
+        logger.info("Saved accound id: {}", no);
 
-        logger.info("Trying to get accound by Id: {}" , no);
+        logger.info("Trying to get accound by Id: {}", no);
         Optional<Account> account = dbServiceAccount.getAccount(no);
 
         account.ifPresentOrElse(

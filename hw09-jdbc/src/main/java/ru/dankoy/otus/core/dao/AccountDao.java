@@ -11,9 +11,6 @@ public interface AccountDao {
 
     long insertAccount(Account account);
 
-    //void updateUser(Account account);
-    //void insertOrUpdate(Account account);
-
     SessionManager getSessionManager();
 
 }
