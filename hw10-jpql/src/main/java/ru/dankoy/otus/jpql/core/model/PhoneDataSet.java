@@ -16,7 +16,7 @@ public class PhoneDataSet {
 
     private String number;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY) // вариант 2 создания схемы
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 

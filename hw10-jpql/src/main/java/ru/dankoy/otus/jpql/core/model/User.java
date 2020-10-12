@@ -25,9 +25,6 @@ public class User {
     @Column(name = "age")
     private int age;
 
-    //    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name="id")
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private AddressDataSet address = new AddressDataSet();
 
