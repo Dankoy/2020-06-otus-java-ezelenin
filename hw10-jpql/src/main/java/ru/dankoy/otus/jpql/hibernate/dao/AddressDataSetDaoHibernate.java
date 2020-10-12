@@ -65,12 +65,8 @@ public class AddressDataSetDaoHibernate implements AddressDataSetDao {
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         try {
             Session hibernateSession = currentSession.getHibernateSession();
-            if (addressDataSet.getId() > 0) {
-                hibernateSession.merge(addressDataSet);
-            } else {
-                hibernateSession.persist(addressDataSet);
-                hibernateSession.flush();
-            }
+            hibernateSession.persist(addressDataSet);
+            hibernateSession.flush();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
