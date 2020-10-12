@@ -13,7 +13,7 @@ plugins {
 
     id "io.spring.dependency-management" version "1.0.9.RELEASE"
     // Build uber-jar
-    id 'com.github.johnrengelman.shadow' version '5.2.0' apply false
+    id 'com.github.johnrengelman.shadow' version '6.0.0' apply false
 }
 
 idea {
@@ -47,6 +47,10 @@ allprojects {
             dependency("org.ow2.asm:asm-commons:${Versions.asm}")
             dependency("org.glassfish:javax.json:${Versions.glassfishJson}")
             dependency("com.google.protobuf:protobuf-java-util:${Versions.protobuf}")
+            dependency("org.flywaydb:flyway-core:${Versions.flyway}")
+            dependency("org.postgresql:postgresql:${Versions.postgresql}")
+            dependency("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
+            dependency("org.testcontainers:postgresql:${Versions.testcontainers}")
         }
     }
 
