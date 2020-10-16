@@ -5,6 +5,7 @@ import ru.dankoy.otus.hibernate.cache.CustomCacheImpl;
 import ru.dankoy.otus.hibernate.cache.CustomCacheListenerImpl;
 import ru.dankoy.otus.hibernate.core.dao.AddressDataSetDao;
 import ru.dankoy.otus.hibernate.core.model.AddressDataSet;
+import ru.dankoy.otus.hibernate.core.model.User;
 import ru.dankoy.otus.hibernate.core.sessionmanager.SessionManager;
 
 import java.util.Optional;
@@ -43,6 +44,17 @@ public class CachedAddressDataSetDaoHibernate implements AddressDataSetDao {
 
     @Override
     public void updateAddress(AddressDataSet addressDataSet) {
+
+        Optional<AddressDataSet> addressDataSetFromCache = cache.get(addressDataSet.getId());
+
+        if (addressDataSetFromCache == null) {
+            addressDataSetFromCache = findById(addressDataSet.getId());
+        }
+        if (addressDataSetFromCache.isEmpty()) {
+            addressDataSetDaoHibernate.updateAddress(addressDataSet);
+        } else {
+            addressDataSetDaoHibernate.updateAddress(addressDataSetFromCache.get());
+        }
 
     }
 
