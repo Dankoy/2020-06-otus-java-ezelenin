@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-//TODO: Сделать используя ConnectionPool
-
 public class HomeWork {
     private static final Logger logger = LoggerFactory.getLogger(HomeWork.class);
 

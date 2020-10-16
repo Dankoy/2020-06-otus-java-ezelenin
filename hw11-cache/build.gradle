@@ -9,6 +9,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic")
     implementation("com.h2database:h2")
     implementation("org.hibernate:hibernate-core")
+    implementation("org.hibernate:hibernate-hikaricp")
     implementation('org.flywaydb:flyway-core')
     implementation("com.zaxxer:HikariCP")
 
