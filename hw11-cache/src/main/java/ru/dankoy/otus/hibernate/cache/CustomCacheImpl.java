@@ -19,15 +19,20 @@ public class CustomCacheImpl<K, V> implements CustomCache<K, V> {
     @Override
     public void put(K key, V value) {
         weakHashMap.put(key, value);
+        notify(key, value, "put");
     }
 
     @Override
     public void remove(K key) {
+        V value = weakHashMap.get(key);
         weakHashMap.remove(key);
+        notify(key, value, "remove");
     }
 
     @Override
     public V get(K key) {
+        V value = weakHashMap.get(key);
+        notify(key, value, "get");
         return weakHashMap.get(key);
     }
 
@@ -39,5 +44,9 @@ public class CustomCacheImpl<K, V> implements CustomCache<K, V> {
     @Override
     public void removeListener(CustomCacheListener<K, V> listener) {
         listeners.remove(listener);
+    }
+
+    public void notify(K key, V value, String action) {
+        listeners.forEach(l -> l.notify(key, value, action));
     }
 }
