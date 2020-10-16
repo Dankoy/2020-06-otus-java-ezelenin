@@ -24,6 +24,7 @@ import ru.dankoy.otus.hibernate.hibernate.dao.UserDaoHibernate;
 import ru.dankoy.otus.hibernate.hibernate.sessionmanager.SessionManagerHibernate;
 import ru.dankoy.otus.hibernate.hibernate.utils.HibernateUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -189,6 +190,37 @@ class HibernateTests {
         assertThat(foundUser.get())
                 .usingRecursiveComparison()
                 .isEqualTo(newUser);
+    }
+
+    @Test
+    @DisplayName("Проверка очистки кэша GC")
+    void checkCacheInvalidation() {
+
+        CustomCache<Long, Optional<User>> cache = new CustomCacheImpl<>();
+        CustomCacheListener<Long, Optional<User>> listener = new CustomCacheListenerImpl<>();
+        cache.addListener(listener);
+
+        List<Long> userIdList = new ArrayList<>();
+
+        // Заполнение кучи юзеров в БД + кэш
+        for (int i = 0; i < 90; i++) {
+            UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
+            DBServiceUser dbServiceUser = new DbServiceUserImpl(userDao);
+            DBServiceUser dbServiceUserCache = new DbServiceUserCacheImpl(dbServiceUser, cache);
+
+            // Запись юзера в базу
+            List<PhoneDataSet> phoneDataSets = List.of(new PhoneDataSet("phone1"), new PhoneDataSet("phone2"),
+                    new PhoneDataSet("phone3"));
+            AddressDataSet addressDataSet = new AddressDataSet("nice address");
+            User newUser = new User("name", 12, addressDataSet, phoneDataSets);
+            addressDataSet.setUser(newUser);
+            phoneDataSets.forEach(phone -> phone.setUser(newUser));
+
+            userIdList.add(dbServiceUserCache.saveUser(newUser));
+        }
+
+        userIdList.forEach(cache::get);
+
     }
 
 
