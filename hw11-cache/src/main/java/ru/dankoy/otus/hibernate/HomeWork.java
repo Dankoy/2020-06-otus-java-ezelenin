@@ -38,9 +38,9 @@ public class HomeWork {
 
         SessionManagerHibernate sessionManagerHibernate = getSessionManager();
 
-        // использование Hibernate с кэшем. Работает только внутри одной транзакции. Можно сохранить юзера и получить
-        // его. Обновления не работают так как при операции update вызывается метод persist на объект которого нет в
-        // кэше 1 уровня.
+        // использование Dao классов Hibernate с кэшем. Работает только внутри одной транзакции. Можно сохранить
+        // юзера и получить его. Обновления не работают так как при операции update вызывается метод persist на
+        // объект которого нет в кэше 1 уровня.
 
         // Пример с использованием проксей ru.dankoy.otus.hibernate.hibernate.cacheddao.CachedUserDaoHibernate
 //        var userId = insertUserWithoutCache(sessionManagerHibernate);
