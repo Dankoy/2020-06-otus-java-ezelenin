@@ -10,6 +10,9 @@ import ru.dankoy.otus.hibernate.core.sessionmanager.SessionManager;
 
 import java.util.Optional;
 
+/**
+ * Не использовать. Кэш только у юзера
+ */
 public class CachedAddressDataSetDaoHibernate implements AddressDataSetDao {
 
     private final AddressDataSetDao addressDataSetDaoHibernate;

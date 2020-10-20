@@ -6,34 +6,34 @@ import java.util.WeakHashMap;
 
 public class CustomCacheImpl<K, V> implements CustomCache<K, V> {
 
-    WeakHashMap<K, V> weakHashMap = new WeakHashMap<>();
+    WeakHashMap<K, V> cache = new WeakHashMap<>();
     List<CustomCacheListener<K, V>> listeners = new ArrayList<>();
 
     @Override
     public String toString() {
         return "CustomCacheImpl{" +
-                "weakHashMap=" + weakHashMap +
+                "weakHashMap=" + cache +
                 '}';
     }
 
     @Override
     public void put(K key, V value) {
-        weakHashMap.put(key, value);
+        cache.put(key, value);
         notify(key, value, "put");
     }
 
     @Override
     public void remove(K key) {
-        V value = weakHashMap.get(key);
-        weakHashMap.remove(key);
+        V value = cache.get(key);
+        cache.remove(key);
         notify(key, value, "remove");
     }
 
     @Override
     public V get(K key) {
-        V value = weakHashMap.get(key);
+        V value = cache.get(key);
         notify(key, value, "get");
-        return weakHashMap.get(key);
+        return cache.get(key);
     }
 
     @Override
@@ -47,6 +47,10 @@ public class CustomCacheImpl<K, V> implements CustomCache<K, V> {
     }
 
     public void notify(K key, V value, String action) {
-        listeners.forEach(l -> l.notify(key, value, action));
+        try {
+            listeners.forEach(l -> l.notify(key, value, action));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

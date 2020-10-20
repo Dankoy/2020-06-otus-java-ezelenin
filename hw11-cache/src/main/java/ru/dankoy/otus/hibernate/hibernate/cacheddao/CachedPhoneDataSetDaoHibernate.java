@@ -9,6 +9,9 @@ import ru.dankoy.otus.hibernate.core.sessionmanager.SessionManager;
 
 import java.util.Optional;
 
+/**
+ * Не использовать. Кэш только у юзера
+ */
 public class CachedPhoneDataSetDaoHibernate implements PhoneDataSetDao {
 
     private final PhoneDataSetDao phoneDataSetDao;
