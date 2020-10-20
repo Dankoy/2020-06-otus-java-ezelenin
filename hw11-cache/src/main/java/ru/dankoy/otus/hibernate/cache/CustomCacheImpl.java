@@ -6,8 +6,8 @@ import java.util.WeakHashMap;
 
 public class CustomCacheImpl<K, V> implements CustomCache<K, V> {
 
-    WeakHashMap<K, V> cache = new WeakHashMap<>();
-    List<CustomCacheListener<K, V>> listeners = new ArrayList<>();
+    private final WeakHashMap<K, V> cache = new WeakHashMap<>();
+    private final List<CustomCacheListener<K, V>> listeners = new ArrayList<>();
 
     @Override
     public String toString() {
