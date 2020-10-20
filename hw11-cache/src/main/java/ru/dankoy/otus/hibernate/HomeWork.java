@@ -33,10 +33,15 @@ public class HomeWork {
 
     private static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
     private static UserDao userDaoWithCache;
+    private static CustomCache<Long, Optional<User>> cache;
 
     public static void main(String[] args) {
 
         SessionManagerHibernate sessionManagerHibernate = getSessionManager();
+
+        cache = new CustomCacheImpl<>();
+        CustomCacheListener<Long, Optional<User>> listener = new CustomCacheListenerImpl<>();
+        cache.addListener(listener);
 
         // использование Dao классов Hibernate с кэшем. Работает только внутри одной транзакции. Можно сохранить
         // юзера и получить его. Обновления не работают так как при операции update вызывается метод persist на
@@ -44,35 +49,31 @@ public class HomeWork {
 
         // Пример с использованием проксей ru.dankoy.otus.hibernate.hibernate.cacheddao.CachedUserDaoHibernate
 //        var userId = insertUserWithoutCache(sessionManagerHibernate);
-//        var userId2 = insertUserWithCache(sessionManagerHibernate);
-//        updateAddressWithCache(sessionManagerHibernate, userId2);
-//        updatePhoneWithCache(sessionManagerHibernate, userId2);
+        var userId2 = insertUserWithCache(sessionManagerHibernate);
+        updateAddressWithCache(sessionManagerHibernate, userId2);
+        updatePhoneWithCache(sessionManagerHibernate, userId2);
 
 
-        // Пример с DBService
-        CustomCache<Long, Optional<User>> cache = new CustomCacheImpl<>();
-        CustomCacheListener<Long, Optional<User>> listener = new CustomCacheListenerImpl<>();
-        cache.addListener(listener);
-
-        UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
-        DBServiceUser dbServiceUser = new DbServiceUserImpl(userDao);
-        DBServiceUser dbServiceUserCache = new DbServiceUserCacheImpl(dbServiceUser, cache);
-
-        // Запись юзера в базу
-        List<PhoneDataSet> phoneDataSets = List.of(new PhoneDataSet("phone1"), new PhoneDataSet("phone2"),
-                new PhoneDataSet("phone3"));
-        AddressDataSet addressDataSet = new AddressDataSet("nice address");
-        User newUser = new User("name", 12, addressDataSet, phoneDataSets);
-        addressDataSet.setUser(newUser);
-        phoneDataSets.forEach(phone -> phone.setUser(newUser));
-
-        var userId = dbServiceUserCache.saveUser(newUser);
-
-        Optional<User> foundUser = dbServiceUserCache.getUser(userId);
-        foundUser.ifPresentOrElse(
-                crUser -> logger.info("Found user, name:{}", crUser.getName()),
-                () -> logger.info("user was not found")
-        );
+//        // Пример с DBService
+//        UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
+//        DBServiceUser dbServiceUser = new DbServiceUserImpl(userDao);
+//        DBServiceUser dbServiceUserCache = new DbServiceUserCacheImpl(dbServiceUser, cache);
+//
+//        // Запись юзера в базу
+//        List<PhoneDataSet> phoneDataSets = List.of(new PhoneDataSet("phone1"), new PhoneDataSet("phone2"),
+//                new PhoneDataSet("phone3"));
+//        AddressDataSet addressDataSet = new AddressDataSet("nice address");
+//        User newUser = new User("name", 12, addressDataSet, phoneDataSets);
+//        addressDataSet.setUser(newUser);
+//        phoneDataSets.forEach(phone -> phone.setUser(newUser));
+//
+//        var userId = dbServiceUserCache.saveUser(newUser);
+//
+//        Optional<User> foundUser = dbServiceUserCache.getUser(userId);
+//        foundUser.ifPresentOrElse(
+//                crUser -> logger.info("Found user, name:{}", crUser.getName()),
+//                () -> logger.info("user was not found")
+//        );
 
     }
 
@@ -188,7 +189,7 @@ public class HomeWork {
         sessionManagerHibernate.beginSession();
 
         UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
-        userDaoWithCache = new CachedUserDaoHibernate(userDao);
+        userDaoWithCache = new CachedUserDaoHibernate(userDao, cache);
 
         // Запись юзера в базу
         List<PhoneDataSet> phoneDataSets = new ArrayList<>();
@@ -241,6 +242,7 @@ public class HomeWork {
 
             phones.add(newPhone);
 
+            sessionManagerHibernate.getCurrentSession().getHibernateSession().save(newPhone);
             PhoneDataSetDao phoneDataSetDao = new PhoneDataSetDaoHibernate(sessionManagerHibernate);
 
             phoneDataSetDao.insertPhone(newPhone);
