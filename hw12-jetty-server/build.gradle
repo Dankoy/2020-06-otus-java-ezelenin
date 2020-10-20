@@ -18,6 +18,12 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params")
     testImplementation("org.assertj:assertj-core")
     testImplementation("org.mockito:mockito-junit-jupiter")
+
+    implementation("org.hibernate:hibernate-core")
+    implementation("com.zaxxer:HikariCP")
+    implementation("com.h2database:h2")
+    implementation('org.flywaydb:flyway-core')
+
 }
 
 test {
