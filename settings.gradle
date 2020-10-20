@@ -42,4 +42,5 @@ include 'hw05-aop'
 include 'hw06-atm'
 include 'hw07-message-handler'
 include 'hw10-jpql'
+include 'hw12-jetty-server'
 
