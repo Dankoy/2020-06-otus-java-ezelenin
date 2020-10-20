@@ -47,11 +47,15 @@ class HibernateTests {
     @BeforeEach
     public void setUp() {
 
+        CustomCache<Long, Optional<User>> cache = new CustomCacheImpl<>();
+        CustomCacheListener<Long, Optional<User>> listener = new CustomCacheListenerImpl<>();
+        cache.addListener(listener);
+
         sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_FILE, User.class,
                 AddressDataSet.class, PhoneDataSet.class);
         sessionManagerHibernate = new SessionManagerHibernate(sessionFactory);
         userDao = new UserDaoHibernate(sessionManagerHibernate);
-        cachedUserDaoHibernate = new CachedUserDaoHibernate(userDao);
+        cachedUserDaoHibernate = new CachedUserDaoHibernate(userDao, cache);
         addressDataSetDao = new AddressDataSetDaoHibernate(sessionManagerHibernate);
         phoneDataSetDao = new PhoneDataSetDaoHibernate(sessionManagerHibernate);
 
