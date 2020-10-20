@@ -20,6 +20,7 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter")
 
     implementation("org.hibernate:hibernate-core")
+    implementation("org.hibernate:hibernate-hikaricp")
     implementation("com.zaxxer:HikariCP")
     implementation("com.h2database:h2")
     implementation('org.flywaydb:flyway-core')

@@ -1,5 +1,7 @@
 package ru.dankoy.otus.jetty;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,20 +21,38 @@ import ru.dankoy.otus.jetty.hibernate.dao.PhoneDataSetDaoHibernate;
 import ru.dankoy.otus.jetty.hibernate.dao.UserDaoHibernate;
 import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
 import ru.dankoy.otus.jetty.hibernate.utils.HibernateUtils;
+import ru.dankoy.otus.jetty.service.TemplateProcessor;
+import ru.dankoy.otus.jetty.service.TemplateProcessorImpl;
+import ru.dankoy.otus.jetty.web.server.UsersWebServer;
+import ru.dankoy.otus.jetty.web.server.UsersWebServerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/*
+    Полезные для демо ссылки
 
-public class HomeWork {
-    private static final Logger logger = LoggerFactory.getLogger(HomeWork.class);
+    // Стартовая страница
+    http://localhost:8080
 
+    // Страница пользователей
+    http://localhost:8080/users
+
+    // REST сервис
+    http://localhost:8080/api/user/3
+*/
+
+public class WebServerSimple {
+    private static final Logger logger = LoggerFactory.getLogger(WebServerSimple.class);
+
+    private static final int WEB_SERVER_PORT = 8080;
+    private static final String TEMPLATES_DIR = "/templates/";
     private static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
     private static UserDao userDaoWithCache;
     private static CustomCache<Long, Optional<User>> cache;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         SessionManagerHibernate sessionManagerHibernate = getSessionManager();
 
@@ -46,9 +66,9 @@ public class HomeWork {
 
         // Пример с использованием проксей ru.dankoy.otus.hibernate.hibernate.cacheddao.CachedUserDaoHibernate
 //        var userId = insertUserWithoutCache(sessionManagerHibernate);
-        var userId2 = insertUserWithCache(sessionManagerHibernate);
-        updateAddressWithCache(sessionManagerHibernate, userId2);
-        updatePhoneWithCache(sessionManagerHibernate, userId2);
+//        var userId2 = insertUserWithCache(sessionManagerHibernate);
+//        updateAddressWithCache(sessionManagerHibernate, userId2);
+//        updatePhoneWithCache(sessionManagerHibernate, userId2);
 
 
 //        // Пример с DBService
@@ -71,6 +91,18 @@ public class HomeWork {
 //                crUser -> logger.info("Found user, name:{}", crUser.getName()),
 //                () -> logger.info("user was not found")
 //        );
+
+        UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
+        Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+        TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
+
+        UsersWebServer usersWebServer = new UsersWebServerImpl(WEB_SERVER_PORT, userDao,
+                gson, templateProcessor);
+
+        usersWebServer.start();
+        usersWebServer.join();
+
+
 
     }
 
