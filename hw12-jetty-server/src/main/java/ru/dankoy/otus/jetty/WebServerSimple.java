@@ -60,51 +60,52 @@ public class WebServerSimple {
         CustomCacheListener<Long, Optional<User>> listener = new CustomCacheListenerImpl<>();
         cache.addListener(listener);
 
-        // использование Dao классов Hibernate с кэшем. Работает только внутри одной транзакции. Можно сохранить
-        // юзера и получить его. Обновления не работают так как при операции update вызывается метод persist на
-        // объект которого нет в кэше 1 уровня.
-
-        // Пример с использованием проксей ru.dankoy.otus.hibernate.hibernate.cacheddao.CachedUserDaoHibernate
-//        var userId = insertUserWithoutCache(sessionManagerHibernate);
-//        var userId2 = insertUserWithCache(sessionManagerHibernate);
-//        updateAddressWithCache(sessionManagerHibernate, userId2);
-//        updatePhoneWithCache(sessionManagerHibernate, userId2);
-
-
-//        // Пример с DBService
-//        UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
-//        DBServiceUser dbServiceUser = new DbServiceUserImpl(userDao);
-//        DBServiceUser dbServiceUserCache = new DbServiceUserCacheImpl(dbServiceUser, cache);
-//
-//        // Запись юзера в базу
-//        List<PhoneDataSet> phoneDataSets = List.of(new PhoneDataSet("phone1"), new PhoneDataSet("phone2"),
-//                new PhoneDataSet("phone3"));
-//        AddressDataSet addressDataSet = new AddressDataSet("nice address");
-//        User newUser = new User("name", 12, addressDataSet, phoneDataSets);
-//        addressDataSet.setUser(newUser);
-//        phoneDataSets.forEach(phone -> phone.setUser(newUser));
-//
-//        var userId = dbServiceUserCache.saveUser(newUser);
-//
-//        Optional<User> foundUser = dbServiceUserCache.getUser(userId);
-//        foundUser.ifPresentOrElse(
-//                crUser -> logger.info("Found user, name:{}", crUser.getName()),
-//                () -> logger.info("user was not found")
-//        );
+        insertUsersInDb(sessionManagerHibernate, 20);
 
         UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
-        Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+        UserDao cachedUserDaoHibernate = new CachedUserDaoHibernate(userDao, cache);
+        Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
+                .create();
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
 
-        UsersWebServer usersWebServer = new UsersWebServerImpl(WEB_SERVER_PORT, userDao,
-                gson, templateProcessor);
+        UsersWebServer usersWebServer = new UsersWebServerImpl(WEB_SERVER_PORT, cachedUserDaoHibernate,
+                gson, templateProcessor, sessionManagerHibernate);
 
         usersWebServer.start();
         usersWebServer.join();
 
 
+    }
+
+
+    private static void insertUsersInDb(SessionManagerHibernate sessionManagerHibernate, int amountOfUsers) {
+
+        sessionManagerHibernate.beginSession();
+
+        for (int i = 1; i <= amountOfUsers; i++) {
+
+            UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
+            userDaoWithCache = new CachedUserDaoHibernate(userDao, cache);
+
+            // Запись юзера в базу
+            List<PhoneDataSet> phoneDataSets = new ArrayList<>();
+            phoneDataSets.add(new PhoneDataSet("user" + i + " phone1"));
+            phoneDataSets.add(new PhoneDataSet("user" + i + " phone2"));
+            phoneDataSets.add(new PhoneDataSet("user" + i + " phone3"));
+            phoneDataSets.add(new PhoneDataSet("user" + i + " phone4"));
+
+            AddressDataSet addressDataSet = new AddressDataSet("user" + i + " nice address");
+            User newUser = new User("name" + i, i, addressDataSet, phoneDataSets);
+            addressDataSet.setUser(newUser);
+            phoneDataSets.forEach(phone -> phone.setUser(newUser));
+            var userId = userDaoWithCache.insertUser(newUser);
+
+        }
+
+        sessionManagerHibernate.commitSession();
 
     }
+
 
 // Все методы без кэша
 
