@@ -4,6 +4,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import ru.dankoy.otus.jetty.core.sessionmanager.DatabaseSession;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 
 public class DatabaseSessionHibernate implements DatabaseSession {
     private final Session session;
@@ -28,4 +30,9 @@ public class DatabaseSessionHibernate implements DatabaseSession {
         }
         session.close();
     }
+
+    public CriteriaBuilder getCriteriaBuilder() {
+        return session.getCriteriaBuilder();
+    }
+
 }
