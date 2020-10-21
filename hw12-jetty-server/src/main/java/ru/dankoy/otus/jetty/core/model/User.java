@@ -3,9 +3,9 @@ package ru.dankoy.otus.jetty.core.model;
 import com.google.gson.annotations.Expose;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
 
 /**
  * @author ezelenin
@@ -74,24 +74,28 @@ public class User {
         this.name = name;
     }
 
+    public int getAge() {
+        return age;
+    }
+
     public void setAge(int age) {
         this.age = age;
-    }
-
-    public void setAddress(AddressDataSet address) {
-        this.address = address;
-    }
-
-    public void setPhoneDataSets(List<PhoneDataSet> phoneDataSets) {
-        this.phoneDataSets = phoneDataSets;
     }
 
     public AddressDataSet getAddress() {
         return address;
     }
 
+    public void setAddress(AddressDataSet address) {
+        this.address = address;
+    }
+
     public List<PhoneDataSet> getPhoneDataSets() {
         return phoneDataSets;
+    }
+
+    public void setPhoneDataSets(List<PhoneDataSet> phoneDataSets) {
+        this.phoneDataSets = phoneDataSets;
     }
 
 }
