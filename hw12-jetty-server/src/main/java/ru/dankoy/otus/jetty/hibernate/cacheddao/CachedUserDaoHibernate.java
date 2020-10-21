@@ -5,6 +5,7 @@ import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.core.model.User;
 import ru.dankoy.otus.jetty.core.sessionmanager.SessionManager;
 
+import java.util.List;
 import java.util.Optional;
 
 public class CachedUserDaoHibernate implements UserDao {
@@ -56,6 +57,16 @@ public class CachedUserDaoHibernate implements UserDao {
         cache.put(user.getId(), Optional.of(user));
 
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        List<User> users = userDaoHibernate.getAllUsers();
+
+        users.forEach(user -> cache.put(user.getId(), Optional.of(user)));
+
+        return users;
+    }
+
 
     @Override
     public SessionManager getSessionManager() {

@@ -10,6 +10,11 @@ import ru.dankoy.otus.jetty.core.sessionmanager.SessionManager;
 import ru.dankoy.otus.jetty.hibernate.sessionmanager.DatabaseSessionHibernate;
 import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.Optional;
 
 public class UserDaoHibernate implements UserDao {
@@ -71,6 +76,22 @@ public class UserDaoHibernate implements UserDao {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
         }
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+
+        DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
+        CriteriaBuilder criteriaBuilder = currentSession.getCriteriaBuilder();
+
+        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> rootEntry = criteriaQuery.from(User.class);
+        CriteriaQuery<User> all = criteriaQuery.select(rootEntry);
+
+        TypedQuery<User> allQuery = currentSession.getHibernateSession().createQuery(all);
+
+        return allQuery.getResultList();
+
     }
 
     @Override
