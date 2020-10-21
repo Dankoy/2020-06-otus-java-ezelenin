@@ -1,5 +1,8 @@
 package ru.dankoy.otus.jetty.core.model;
 
+import com.google.gson.annotations.Expose;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 /**
@@ -9,11 +12,14 @@ import javax.persistence.*;
 @Table(name = "tAddress")
 public class AddressDataSet {
 
+    @Expose
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "id")
     private long id;
 
+    @Expose
     private String street;
 
     @OneToOne(cascade = CascadeType.ALL)

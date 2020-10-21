@@ -1,5 +1,8 @@
 package ru.dankoy.otus.jetty.core.model;
 
+import com.google.gson.annotations.Expose;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
@@ -14,20 +17,26 @@ import javax.persistence.*;
 @Table(name = "tUser")
 public class User {
 
+    @Expose
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "id")
     private long id;
 
+    @Expose
     @Column(name = "name")
     private String name;
 
+    @Expose
     @Column(name = "age")
     private int age;
 
+    @Expose
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private AddressDataSet address = new AddressDataSet();
 
+    @Expose
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PhoneDataSet> phoneDataSets = new ArrayList<>();
 
