@@ -8,8 +8,10 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.dankoy.otus.jetty.core.dao.UserDao;
+import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
 import ru.dankoy.otus.jetty.service.FileSystemHelper;
 import ru.dankoy.otus.jetty.service.TemplateProcessor;
+import ru.dankoy.otus.jetty.web.servlet.UsersApiServlet;
 import ru.dankoy.otus.jetty.web.servlet.UsersServlet;
 
 public class UsersWebServerImpl implements UsersWebServer {
@@ -21,12 +23,15 @@ public class UsersWebServerImpl implements UsersWebServer {
     private final Gson gson;
     protected final TemplateProcessor templateProcessor;
     private final Server server;
+    private final SessionManagerHibernate sessionManagerHibernate;
 
-    public UsersWebServerImpl(int port, UserDao userDao, Gson gson, TemplateProcessor templateProcessor) {
+    public UsersWebServerImpl(int port, UserDao userDao, Gson gson, TemplateProcessor templateProcessor,
+            SessionManagerHibernate sessionManagerHibernate) {
         this.userDao = userDao;
         this.gson = gson;
         this.templateProcessor = templateProcessor;
-        server = new Server(port);
+        this.server = new Server(port);
+        this.sessionManagerHibernate = sessionManagerHibernate;
     }
 
     @Override
@@ -54,7 +59,7 @@ public class UsersWebServerImpl implements UsersWebServer {
 
         HandlerList handlers = new HandlerList();
         handlers.addHandler(resourceHandler);
-        handlers.addHandler(applySecurity(servletContextHandler, "/users", "/api/user/*"));
+        handlers.addHandler(applySecurity(servletContextHandler, "/api/user/*", "users"));
 
 
         server.setHandler(handlers);
@@ -62,7 +67,7 @@ public class UsersWebServerImpl implements UsersWebServer {
 
     }
 
-    protected Handler applySecurity(ServletContextHandler servletContextHandler, String ...paths) {
+    protected Handler applySecurity(ServletContextHandler servletContextHandler, String... paths) {
         return servletContextHandler;
     }
 
@@ -76,8 +81,11 @@ public class UsersWebServerImpl implements UsersWebServer {
 
     private ServletContextHandler createServletContextHandler() {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor, userDao)), "/users");
-//        servletContextHandler.addServlet(new ServletHolder(new UsersApiServlet(userDao, gson)), "/api/user/*");
+        servletContextHandler
+                .addServlet(new ServletHolder(new UsersServlet(templateProcessor, userDao, sessionManagerHibernate)),
+                        "/users");
+        servletContextHandler.addServlet(new ServletHolder(new UsersApiServlet(userDao, gson, sessionManagerHibernate)),
+                "/api/user/*");
         return servletContextHandler;
     }
 
