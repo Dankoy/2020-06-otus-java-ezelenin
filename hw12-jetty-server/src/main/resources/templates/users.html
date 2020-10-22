@@ -20,8 +20,12 @@
 <button onclick="getUserById()">Получить</button>
 <pre id="userDataContainer"></pre>
 
+<h4>Получить список пользователей</h4>
+<button onclick="getAllUsers()">Получить всех польователей</button>
+<pre id="userListDataContainer"></pre>
+
 <h4>Случайный пользователь</h4>
-<table style="width: 400px">
+<table style="width: 700px" border="2px">
     <thead>
     <tr>
         <td style="width: 50px">Id</td>
@@ -32,13 +36,28 @@
     </tr>
     </thead>
     <tbody>
+    <#list users as user>
     <tr>
-        <td>${randomUser.id}</td>
-        <td>${randomUser.name}</td>
-        <td>${randomUser.age}</td>
-        <td>${randomUser.phones?join(", ")}</td>
-        <td>${randomUser.address}</td>
+        <td>${user.id}</td>
+        <td>${user.name}</td>
+        <td>${user.age}</td>
+        <#if user.phoneDataSets??>
+        <td>
+            <table border="1px">
+                <#list user.phoneDataSets as phones>
+                <tr>
+                    <td>${phones.id}</td>
+                    <td>${phones.number}</td>
+                </tr>
+                </#list>
+            </table>
+        </td>
+        </#if>
+    <#if user.address??>
+        <td>${user.address.street}</td>
+    </#if>
     </tr>
+    </#list>
     </tbody>
 </table>
 </body>

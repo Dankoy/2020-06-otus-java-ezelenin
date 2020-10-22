@@ -31,21 +31,12 @@ public class UsersServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse response) throws IOException {
-        Map<String, Object> paramsMap = new HashMap<>();
         Map<String, Object> userMap = new HashMap<>();
         sessionManagerHibernate.beginSession();
 
         List<User> users = userDao.getAllUsers();
 
-        User randomUser = users.stream().findAny().get();
-
-        paramsMap.put("id", randomUser.getId());
-        paramsMap.put("name", randomUser.getName());
-        paramsMap.put("age", randomUser.getAge());
-        paramsMap.put("phones", randomUser.getPhoneDataSets());
-        paramsMap.put("address", randomUser.getAddress());
-
-        userMap.put(TEMPLATE_ATTR_RANDOM_USER, paramsMap);
+        userMap.put("users", users);
 
         response.setContentType("text/html");
         response.getWriter().println(templateProcessor.getPage(USERS_PAGE_TEMPLATE, userMap));

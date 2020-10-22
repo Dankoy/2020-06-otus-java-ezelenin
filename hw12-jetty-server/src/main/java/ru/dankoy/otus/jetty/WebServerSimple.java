@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 
 /*
-    Полезные для демо ссылки
 
     // Стартовая страница
     http://localhost:8080
@@ -60,6 +59,7 @@ public class WebServerSimple {
         CustomCacheListener<Long, Optional<User>> listener = new CustomCacheListenerImpl<>();
         cache.addListener(listener);
 
+        // Создание юзеров в базе.
         insertUsersInDb(sessionManagerHibernate, 20);
 
         UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);

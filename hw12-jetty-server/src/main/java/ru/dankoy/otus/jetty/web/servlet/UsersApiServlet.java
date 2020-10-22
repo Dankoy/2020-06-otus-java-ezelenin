@@ -34,7 +34,6 @@ public class UsersApiServlet extends HttpServlet {
 
         response.setContentType("application/json;charset=UTF-8");
         ServletOutputStream out = response.getOutputStream();
-        String json = gson.toJson(user);
         out.print(gson.toJson(user));
 
         sessionManagerHibernate.commitSession();
