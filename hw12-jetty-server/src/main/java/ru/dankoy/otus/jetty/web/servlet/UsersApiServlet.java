@@ -1,6 +1,7 @@
 package ru.dankoy.otus.jetty.web.servlet;
 
 import com.google.gson.Gson;
+import ru.dankoy.otus.jetty.WebServerBasicAuth;
 import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.core.model.User;
 import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
@@ -9,6 +10,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class UsersApiServlet extends HttpServlet {
@@ -27,6 +29,9 @@ public class UsersApiServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        HttpSession session = request.getSession();
+        session.setMaxInactiveInterval(WebServerBasicAuth.MAX_INACTIVE_INTERVAL);
 
         sessionManagerHibernate.beginSession();
 

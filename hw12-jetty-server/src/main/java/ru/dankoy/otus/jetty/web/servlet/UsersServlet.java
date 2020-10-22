@@ -1,5 +1,6 @@
 package ru.dankoy.otus.jetty.web.servlet;
 
+import ru.dankoy.otus.jetty.WebServerBasicAuth;
 import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.core.model.User;
 import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
@@ -8,6 +9,7 @@ import ru.dankoy.otus.jetty.service.TemplateProcessor;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +18,6 @@ import java.util.Map;
 public class UsersServlet extends HttpServlet {
 
     private static final String USERS_PAGE_TEMPLATE = "users.html";
-    private static final String TEMPLATE_ATTR_RANDOM_USER = "randomUser";
 
     private final UserDao userDao;
     private final TemplateProcessor templateProcessor;
@@ -31,6 +32,10 @@ public class UsersServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse response) throws IOException {
+
+        HttpSession session = req.getSession();
+        session.setMaxInactiveInterval(WebServerBasicAuth.MAX_INACTIVE_INTERVAL);
+
         Map<String, Object> userMap = new HashMap<>();
         sessionManagerHibernate.beginSession();
 

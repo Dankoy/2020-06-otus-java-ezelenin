@@ -48,6 +48,7 @@ public class WebServerBasicAuth {
     private static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
     private static final String HASH_LOGIN_SERVICE_CONFIG_NAME = "realm.properties";
     private static final String REALM_NAME = "admin";
+    public static final int MAX_INACTIVE_INTERVAL = 10;
     private static UserDao userDaoWithCache;
     private static CustomCache<Long, User> cache;
 
