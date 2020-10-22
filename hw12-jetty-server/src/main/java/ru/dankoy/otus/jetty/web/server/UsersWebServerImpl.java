@@ -11,6 +11,7 @@ import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
 import ru.dankoy.otus.jetty.service.FileSystemHelper;
 import ru.dankoy.otus.jetty.service.TemplateProcessor;
+import ru.dankoy.otus.jetty.web.servlet.AllUsersApiServlet;
 import ru.dankoy.otus.jetty.web.servlet.UsersApiServlet;
 import ru.dankoy.otus.jetty.web.servlet.UsersServlet;
 
@@ -59,7 +60,7 @@ public class UsersWebServerImpl implements UsersWebServer {
 
         HandlerList handlers = new HandlerList();
         handlers.addHandler(resourceHandler);
-        handlers.addHandler(applySecurity(servletContextHandler, "/api/user/*", "users"));
+        handlers.addHandler(applySecurity(servletContextHandler, "/api/user/*", "users", "/api/user"));
 
 
         server.setHandler(handlers);
@@ -86,6 +87,8 @@ public class UsersWebServerImpl implements UsersWebServer {
                         "/users");
         servletContextHandler.addServlet(new ServletHolder(new UsersApiServlet(userDao, gson, sessionManagerHibernate)),
                 "/api/user/*");
+        servletContextHandler.addServlet(new ServletHolder(new AllUsersApiServlet(userDao, gson, sessionManagerHibernate)),
+                "/api/user");
         return servletContextHandler;
     }
 
