@@ -60,7 +60,7 @@ public class WebServerSimple {
         cache.addListener(listener);
 
         // Создание юзеров в базе.
-        insertUsersInDb(sessionManagerHibernate, 20);
+        insertUsersInDb(sessionManagerHibernate, 3);
 
         UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
         UserDao cachedUserDaoHibernate = new CachedUserDaoHibernate(userDao, cache);
