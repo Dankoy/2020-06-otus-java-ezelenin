@@ -60,7 +60,7 @@ public class UsersWebServerImpl implements UsersWebServer {
 
         HandlerList handlers = new HandlerList();
         handlers.addHandler(resourceHandler);
-        handlers.addHandler(applySecurity(servletContextHandler, "/api/user/*", "users", "/api/user"));
+        handlers.addHandler(applySecurity(servletContextHandler, "/api/user/*", "/users", "/api/user"));
 
 
         server.setHandler(handlers);
