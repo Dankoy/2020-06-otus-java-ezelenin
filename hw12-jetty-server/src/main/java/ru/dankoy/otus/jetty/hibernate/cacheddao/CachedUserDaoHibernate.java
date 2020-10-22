@@ -11,9 +11,9 @@ import java.util.Optional;
 public class CachedUserDaoHibernate implements UserDao {
 
     private final UserDao userDaoHibernate;
-    private final CustomCache<Long, Optional<User>> cache;
+    private final CustomCache<Long, User> cache;
 
-    public CachedUserDaoHibernate(UserDao userDaoHibernate, CustomCache<Long, Optional<User>> cache) {
+    public CachedUserDaoHibernate(UserDao userDaoHibernate, CustomCache<Long, User> cache) {
         this.userDaoHibernate = userDaoHibernate;
         this.cache = cache;
     }
@@ -22,10 +22,10 @@ public class CachedUserDaoHibernate implements UserDao {
     @Override
     public Optional<User> findById(long id) {
 
-        Optional<User> userFromCache = cache.get(id);
+        Optional<User> userFromCache = Optional.ofNullable(cache.get(id));
         if (userFromCache.isEmpty()) {
             Optional<User> foundUser = userDaoHibernate.findById(id);
-            cache.put(id, foundUser);
+            cache.put(id, foundUser.orElse(null));
             return foundUser;
         } else {
             return userFromCache;
@@ -37,7 +37,7 @@ public class CachedUserDaoHibernate implements UserDao {
     public long insertUser(User user) {
 
         long userId = userDaoHibernate.insertUser(user);
-        cache.put(userId, Optional.ofNullable(user));
+        cache.put(userId, user);
 
         return userId;
     }
@@ -46,7 +46,7 @@ public class CachedUserDaoHibernate implements UserDao {
     public void updateUser(User user) {
 
         userDaoHibernate.updateUser(user);
-        cache.put(user.getId(), Optional.of(user));
+        cache.put(user.getId(), user);
 
     }
 
@@ -54,7 +54,7 @@ public class CachedUserDaoHibernate implements UserDao {
     public void insertOrUpdate(User user) {
 
         userDaoHibernate.insertOrUpdate(user);
-        cache.put(user.getId(), Optional.of(user));
+        cache.put(user.getId(), user);
 
     }
 
@@ -62,7 +62,7 @@ public class CachedUserDaoHibernate implements UserDao {
     public List<User> getAllUsers() {
         List<User> users = userDaoHibernate.getAllUsers();
 
-        users.forEach(user -> cache.put(user.getId(), Optional.of(user)));
+        users.forEach(user -> cache.put(user.getId(), user));
 
         return users;
     }
