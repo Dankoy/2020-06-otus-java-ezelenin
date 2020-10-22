@@ -72,7 +72,6 @@ public class WebServerBasicAuth {
         String hashLoginServiceConfigPath = FileSystemHelper
                 .localFileNameOrResourceNameToFullPath(HASH_LOGIN_SERVICE_CONFIG_NAME);
         LoginService loginService = new HashLoginService(REALM_NAME, hashLoginServiceConfigPath);
-        System.out.println(loginService.getName());
 
         UsersWebServer usersWebServer = new UsersWebServerWithBasicAuth(WEB_SERVER_PORT, loginService,
                 cachedUserDaoHibernate,
