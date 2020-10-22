@@ -12,6 +12,16 @@
                 .then(user => userDataContainer.innerHTML = JSON.stringify(user));
         }
     </script>
+
+    <script>
+        function getAllUsers() {
+            const userDataContainer = document.getElementById('userListDataContainer');
+            fetch('api/user')
+                .then(response => response.json())
+                .then(user => userDataContainer.innerHTML = JSON.stringify(user));
+        }
+    </script>
+
 </head>
 
 <body>
