@@ -24,7 +24,6 @@ import ru.dankoy.otus.jetty.web.server.UsersWebServerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /*
 
@@ -45,14 +44,14 @@ public class WebServerSimple {
     private static final String TEMPLATES_DIR = "/templates/";
     private static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
     private static UserDao userDaoWithCache;
-    private static CustomCache<Long, Optional<User>> cache;
+    private static CustomCache<Long, User> cache;
 
     public static void main(String[] args) throws Exception {
 
         SessionManagerHibernate sessionManagerHibernate = getSessionManager();
 
         cache = new CustomCacheImpl<>();
-        CustomCacheListener<Long, Optional<User>> listener = new CustomCacheListenerImpl<>();
+        CustomCacheListener<Long, User> listener = new CustomCacheListenerImpl<>();
         cache.addListener(listener);
 
         // Создание юзеров в базе.
