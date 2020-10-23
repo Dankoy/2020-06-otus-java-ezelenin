@@ -5,20 +5,24 @@ import com.google.gson.GsonBuilder;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.LoginService;
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.dankoy.otus.jetty.core.dao.UserDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.dankoy.otus.jetty.core.model.AddressDataSet;
 import ru.dankoy.otus.jetty.core.model.PhoneDataSet;
 import ru.dankoy.otus.jetty.core.model.User;
-import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.dankoy.otus.jetty.core.service.userservice.DbServiceUserImpl;
+import ru.dankoy.otus.jetty.h2.DataSourceH2;
 import ru.dankoy.otus.jetty.service.FileSystemHelper;
 import ru.dankoy.otus.jetty.service.TemplateProcessor;
 import ru.dankoy.otus.jetty.web.server.UsersWebServer;
 import ru.dankoy.otus.jetty.web.server.UsersWebServerWithBasicAuth;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
@@ -37,6 +41,8 @@ import static org.mockito.Mockito.mock;
 
 class JettyTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(JettyTest.class);
+
     private static final int WEB_SERVER_PORT = 8989;
     private static final String WEB_SERVER_URL = "http://localhost:" + WEB_SERVER_PORT + "/";
     private static final String API_USER_URL = "api/user";
@@ -54,15 +60,29 @@ class JettyTest {
     private static UsersWebServer webServer;
     private static HttpClient http;
 
+    private static void flywayMigrations(DataSource dataSource) {
+        logger.info("db migration started...");
+        var flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:/db/migration")
+                .load();
+        flyway.migrate();
+        logger.info("db migration finished.");
+        logger.info("***");
+    }
+
     @BeforeAll
     static void setUp() throws Exception {
 
         http = HttpClient.newHttpClient();
         ENCODED_STRING = Base64.getEncoder().encodeToString(("user1" + ":" + "user1").getBytes());
 
+        var dataSource = new DataSourceH2();
+        flywayMigrations(dataSource);
+
+        var dbServiceUser = mock(DbServiceUserImpl.class);
+
         TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
-        UserDao userDao = mock(UserDao.class);
-        SessionManagerHibernate sessionManagerHibernate = mock(SessionManagerHibernate.class);
 
         List<PhoneDataSet> phoneDataSets = new ArrayList<>();
         phoneDataSets.add(new PhoneDataSet("user phone1"));
@@ -80,16 +100,15 @@ class JettyTest {
         addressDataSet.setUser(DEFAULT_USER);
         phoneDataSets.forEach(phone -> phone.setUser(DEFAULT_USER));
 
-        given(userDao.findById(DEFAULT_USER_ID)).willReturn(Optional.of(DEFAULT_USER));
-        given(userDao.getAllUsers()).willReturn(List.of(DEFAULT_USER));
+        given(dbServiceUser.getUser(DEFAULT_USER_ID)).willReturn(Optional.of(DEFAULT_USER));
+        given(dbServiceUser.getAllUsers()).willReturn(List.of(DEFAULT_USER));
 
         String hashLoginServiceConfigPath = FileSystemHelper
                 .localFileNameOrResourceNameToFullPath(HASH_LOGIN_SERVICE_CONFIG_NAME);
         LoginService loginService = new HashLoginService(REALM_NAME, hashLoginServiceConfigPath);
 
         gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
-        webServer = new UsersWebServerWithBasicAuth(WEB_SERVER_PORT, loginService, userDao, gson, templateProcessor,
-                sessionManagerHibernate);
+        webServer = new UsersWebServerWithBasicAuth(WEB_SERVER_PORT, loginService, dbServiceUser, gson, templateProcessor);
         webServer.start();
 
     }
