@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.LoginService;
+import org.flywaydb.core.Flyway;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.core.model.AddressDataSet;
 import ru.dankoy.otus.jetty.core.model.PhoneDataSet;
 import ru.dankoy.otus.jetty.core.model.User;
+import ru.dankoy.otus.jetty.h2.DataSourceH2;
 import ru.dankoy.otus.jetty.hibernate.cacheddao.CachedUserDaoHibernate;
 import ru.dankoy.otus.jetty.hibernate.dao.UserDaoHibernate;
 import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
@@ -25,8 +27,7 @@ import ru.dankoy.otus.jetty.service.TemplateProcessorImpl;
 import ru.dankoy.otus.jetty.web.server.UsersWebServer;
 import ru.dankoy.otus.jetty.web.server.UsersWebServerWithBasicAuth;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.sql.DataSource;
 
 /*
 
@@ -49,19 +50,17 @@ public class WebServerBasicAuth {
     private static final String HASH_LOGIN_SERVICE_CONFIG_NAME = "realm.properties";
     private static final String REALM_NAME = "admin";
     public static final int MAX_INACTIVE_INTERVAL = 10;
-    private static UserDao userDaoWithCache;
-    private static CustomCache<Long, User> cache;
+    private static final CustomCache<Long, User> cache = new CustomCacheImpl<>();
 
     public static void main(String[] args) throws Exception {
 
+        var dataSource = new DataSourceH2();
+        flywayMigrations(dataSource);
+
         SessionManagerHibernate sessionManagerHibernate = getSessionManager();
 
-        cache = new CustomCacheImpl<>();
         CustomCacheListener<Long, User> listener = new CustomCacheListenerImpl<>();
         cache.addListener(listener);
-
-        // Создание юзеров в базе.
-        insertUsersInDb(sessionManagerHibernate, 3);
 
         UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
         UserDao cachedUserDaoHibernate = new CachedUserDaoHibernate(userDao, cache);
@@ -84,40 +83,6 @@ public class WebServerBasicAuth {
     }
 
     /**
-     * Заполенение базы юзерами
-     *
-     * @param sessionManagerHibernate
-     * @param amountOfUsers
-     */
-    private static void insertUsersInDb(SessionManagerHibernate sessionManagerHibernate, int amountOfUsers) {
-
-        sessionManagerHibernate.beginSession();
-
-        for (int i = 1; i <= amountOfUsers; i++) {
-
-            UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
-            userDaoWithCache = new CachedUserDaoHibernate(userDao, cache);
-
-            // Запись юзера в базу
-            List<PhoneDataSet> phoneDataSets = new ArrayList<>();
-            phoneDataSets.add(new PhoneDataSet("user" + i + " phone1"));
-            phoneDataSets.add(new PhoneDataSet("user" + i + " phone2"));
-            phoneDataSets.add(new PhoneDataSet("user" + i + " phone3"));
-            phoneDataSets.add(new PhoneDataSet("user" + i + " phone4"));
-
-            AddressDataSet addressDataSet = new AddressDataSet("user" + i + " nice address");
-            User newUser = new User("name" + i, i, addressDataSet, phoneDataSets);
-            addressDataSet.setUser(newUser);
-            phoneDataSets.forEach(phone -> phone.setUser(newUser));
-            var userId = userDaoWithCache.insertUser(newUser);
-
-        }
-
-        sessionManagerHibernate.commitSession();
-
-    }
-
-    /**
      * Получение менеджера сессий hibernate
      *
      * @return
@@ -128,4 +93,15 @@ public class WebServerBasicAuth {
         return new SessionManagerHibernate(sessionFactory);
     }
 
+
+    private static void flywayMigrations(DataSource dataSource) {
+        logger.info("db migration started...");
+        var flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:/db/migration")
+                .load();
+        flyway.migrate();
+        logger.info("db migration finished.");
+        logger.info("***");
+    }
 }
