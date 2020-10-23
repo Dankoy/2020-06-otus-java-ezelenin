@@ -48,18 +48,56 @@ public class AllUsersApiServlet extends HttpServlet {
         HttpSession session = request.getSession();
         session.setMaxInactiveInterval(WebServerBasicAuth.MAX_INACTIVE_INTERVAL);
 
+        var userFromJson = getUserJsonFromRequestBody(request);
+        var id = saveUser(userFromJson);
+
+        returnSavedUser(id, response);
+
+    }
+
+    /**
+     * Формирует объект User из json строки переданной в теле зарпоса
+     *
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    private User getUserJsonFromRequestBody(HttpServletRequest request) throws IOException {
+
         BufferedReader reader = request.getReader();
         String body = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-        User user = gson.fromJson(body, User.class);
+        return gson.fromJson(body, User.class);
+
+    }
+
+    /**
+     * Сохраняет юзера в базе
+     *
+     * @param userFromJson
+     * @return
+     */
+    private long saveUser(User userFromJson) {
 
         //Заполнение связей между юзером, адресом и телефонами
-        AddressDataSet addressDataSet = user.getAddress();
-        addressDataSet.setUser(user);
+        AddressDataSet addressDataSet = userFromJson.getAddress();
+        addressDataSet.setUser(userFromJson);
 
-        List<PhoneDataSet> phoneDataSets = user.getPhoneDataSets();
-        phoneDataSets.forEach(phoneDataSet -> phoneDataSet.setUser(user));
+        List<PhoneDataSet> phoneDataSets = userFromJson.getPhoneDataSets();
+        phoneDataSets.forEach(phoneDataSet -> phoneDataSet.setUser(userFromJson));
 
-        var id = dbServiceUser.saveUser(user);
+        return dbServiceUser.saveUser(userFromJson);
+
+    }
+
+    /**
+     * Формирует ответ в виде json строки созданного юзера в бд.
+     *
+     * @param id
+     * @param response
+     * @throws IOException
+     */
+    private void returnSavedUser(long id, HttpServletResponse response) throws IOException {
+
         response.setStatus(HttpServletResponse.SC_OK);
 
         Optional<User> foundUser = dbServiceUser.getUser(id);
