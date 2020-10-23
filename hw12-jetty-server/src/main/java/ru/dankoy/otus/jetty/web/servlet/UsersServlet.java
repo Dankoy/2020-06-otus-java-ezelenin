@@ -1,9 +1,8 @@
 package ru.dankoy.otus.jetty.web.servlet;
 
 import ru.dankoy.otus.jetty.WebServerBasicAuth;
-import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.core.model.User;
-import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.dankoy.otus.jetty.core.service.userservice.DBServiceUser;
 import ru.dankoy.otus.jetty.service.TemplateProcessor;
 
 import javax.servlet.http.HttpServlet;
@@ -19,15 +18,12 @@ public class UsersServlet extends HttpServlet {
 
     private static final String USERS_PAGE_TEMPLATE = "users.html";
 
-    private final UserDao userDao;
+    private final DBServiceUser dbServiceUser;
     private final TemplateProcessor templateProcessor;
-    private final SessionManagerHibernate sessionManagerHibernate;
 
-    public UsersServlet(TemplateProcessor templateProcessor, UserDao userDao,
-            SessionManagerHibernate sessionManagerHibernate) {
+    public UsersServlet(TemplateProcessor templateProcessor, DBServiceUser dbServiceUser) {
         this.templateProcessor = templateProcessor;
-        this.userDao = userDao;
-        this.sessionManagerHibernate = sessionManagerHibernate;
+        this.dbServiceUser = dbServiceUser;
     }
 
     @Override
@@ -37,16 +33,12 @@ public class UsersServlet extends HttpServlet {
         session.setMaxInactiveInterval(WebServerBasicAuth.MAX_INACTIVE_INTERVAL);
 
         Map<String, Object> userMap = new HashMap<>();
-        sessionManagerHibernate.beginSession();
-
-        List<User> users = userDao.getAllUsers();
+        List<User> users = dbServiceUser.getAllUsers();
 
         userMap.put("users", users);
 
         response.setContentType("text/html");
         response.getWriter().println(templateProcessor.getPage(USERS_PAGE_TEMPLATE, userMap));
-
-        sessionManagerHibernate.commitSession();
 
     }
 

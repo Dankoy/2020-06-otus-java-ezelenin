@@ -2,9 +2,8 @@ package ru.dankoy.otus.jetty.web.servlet;
 
 import com.google.gson.Gson;
 import ru.dankoy.otus.jetty.WebServerBasicAuth;
-import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.core.model.User;
-import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.dankoy.otus.jetty.core.service.userservice.DBServiceUser;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -17,14 +16,12 @@ public class UsersApiServlet extends HttpServlet {
 
     private static final int ID_PATH_PARAM_POSITION = 1;
 
-    private final UserDao userDao;
+    private final DBServiceUser dbServiceUser;
     private final Gson gson;
-    private final SessionManagerHibernate sessionManagerHibernate;
 
-    public UsersApiServlet(UserDao userDao, Gson gson, SessionManagerHibernate sessionManagerHibernate) {
-        this.userDao = userDao;
+    public UsersApiServlet(DBServiceUser dbServiceUser, Gson gson) {
+        this.dbServiceUser = dbServiceUser;
         this.gson = gson;
-        this.sessionManagerHibernate = sessionManagerHibernate;
     }
 
     @Override
@@ -33,15 +30,12 @@ public class UsersApiServlet extends HttpServlet {
         HttpSession session = request.getSession();
         session.setMaxInactiveInterval(WebServerBasicAuth.MAX_INACTIVE_INTERVAL);
 
-        sessionManagerHibernate.beginSession();
-
-        User user = userDao.findById(extractIdFromRequest(request)).orElse(null);
+        User user = dbServiceUser.getUser(extractIdFromRequest(request)).orElse(null);
 
         response.setContentType("application/json;charset=UTF-8");
         ServletOutputStream out = response.getOutputStream();
         out.print(gson.toJson(user));
 
-        sessionManagerHibernate.commitSession();
     }
 
     private long extractIdFromRequest(HttpServletRequest request) {

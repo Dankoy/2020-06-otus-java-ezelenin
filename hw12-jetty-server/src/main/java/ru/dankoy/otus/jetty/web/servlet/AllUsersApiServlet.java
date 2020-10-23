@@ -2,11 +2,10 @@ package ru.dankoy.otus.jetty.web.servlet;
 
 import com.google.gson.Gson;
 import ru.dankoy.otus.jetty.WebServerBasicAuth;
-import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.core.model.AddressDataSet;
 import ru.dankoy.otus.jetty.core.model.PhoneDataSet;
 import ru.dankoy.otus.jetty.core.model.User;
-import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.dankoy.otus.jetty.core.service.userservice.DBServiceUser;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -21,14 +20,12 @@ import java.util.stream.Collectors;
 
 public class AllUsersApiServlet extends HttpServlet {
 
-    private final UserDao userDao;
+    private final DBServiceUser dbServiceUser;
     private final Gson gson;
-    private final SessionManagerHibernate sessionManagerHibernate;
 
-    public AllUsersApiServlet(UserDao userDao, Gson gson, SessionManagerHibernate sessionManagerHibernate) {
-        this.userDao = userDao;
+    public AllUsersApiServlet(DBServiceUser dbServiceUser, Gson gson) {
+        this.dbServiceUser = dbServiceUser;
         this.gson = gson;
-        this.sessionManagerHibernate = sessionManagerHibernate;
     }
 
     @Override
@@ -37,15 +34,12 @@ public class AllUsersApiServlet extends HttpServlet {
         HttpSession session = request.getSession();
         session.setMaxInactiveInterval(WebServerBasicAuth.MAX_INACTIVE_INTERVAL);
 
-        sessionManagerHibernate.beginSession();
-
-        List<User> user = userDao.getAllUsers();
+        List<User> user = dbServiceUser.getAllUsers();
 
         response.setContentType("application/json;charset=UTF-8");
         ServletOutputStream out = response.getOutputStream();
         out.print(gson.toJson(user));
 
-        sessionManagerHibernate.commitSession();
     }
 
     @Override
@@ -53,8 +47,6 @@ public class AllUsersApiServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
         session.setMaxInactiveInterval(WebServerBasicAuth.MAX_INACTIVE_INTERVAL);
-
-        sessionManagerHibernate.beginSession();
 
         BufferedReader reader = request.getReader();
         String body = reader.lines().collect(Collectors.joining(System.lineSeparator()));
@@ -67,15 +59,13 @@ public class AllUsersApiServlet extends HttpServlet {
         List<PhoneDataSet> phoneDataSets = user.getPhoneDataSets();
         phoneDataSets.forEach(phoneDataSet -> phoneDataSet.setUser(user));
 
-        var id = userDao.insertUser(user);
+        var id = dbServiceUser.saveUser(user);
         response.setStatus(HttpServletResponse.SC_OK);
 
-        Optional<User> foundUser = userDao.findById(id);
+        Optional<User> foundUser = dbServiceUser.getUser(id);
         response.setContentType("application/json;charset=UTF-8");
         ServletOutputStream out = response.getOutputStream();
         out.print(gson.toJson(foundUser.orElse(null)));
-
-        sessionManagerHibernate.commitSession();
 
     }
 
