@@ -10,7 +10,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import ru.dankoy.otus.jetty.core.service.userservice.DBServiceUser;
 import ru.dankoy.otus.jetty.service.FileSystemHelper;
 import ru.dankoy.otus.jetty.service.TemplateProcessor;
-import ru.dankoy.otus.jetty.web.servlet.AllUsersApiServlet;
 import ru.dankoy.otus.jetty.web.servlet.UsersApiServlet;
 import ru.dankoy.otus.jetty.web.servlet.UsersServlet;
 
@@ -83,8 +82,6 @@ public class UsersWebServerImpl implements UsersWebServer {
                         "/users");
         servletContextHandler.addServlet(new ServletHolder(new UsersApiServlet(dbServiceUser, gson)),
                 "/api/user/*");
-        servletContextHandler.addServlet(new ServletHolder(new AllUsersApiServlet(dbServiceUser, gson)),
-                "/api/user");
         return servletContextHandler;
     }
 
