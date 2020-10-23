@@ -9,8 +9,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.security.Constraint;
-import ru.dankoy.otus.jetty.core.dao.UserDao;
-import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.dankoy.otus.jetty.core.service.userservice.DBServiceUser;
 import ru.dankoy.otus.jetty.service.TemplateProcessor;
 
 import java.util.ArrayList;
@@ -25,10 +24,9 @@ public class UsersWebServerWithBasicAuth extends UsersWebServerImpl {
 
     private final LoginService loginService;
 
-    public UsersWebServerWithBasicAuth(int port, LoginService loginService, UserDao userDao, Gson gson,
-            TemplateProcessor templateProcessor,
-            SessionManagerHibernate sessionManagerHibernate) {
-        super(port, userDao, gson, templateProcessor, sessionManagerHibernate);
+    public UsersWebServerWithBasicAuth(int port, LoginService loginService, DBServiceUser dbServiceUser, Gson gson,
+            TemplateProcessor templateProcessor) {
+        super(port, dbServiceUser, gson, templateProcessor);
         this.loginService = loginService;
     }
 

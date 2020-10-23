@@ -12,12 +12,12 @@ import ru.dankoy.otus.jetty.cache.CustomCache;
 import ru.dankoy.otus.jetty.cache.CustomCacheImpl;
 import ru.dankoy.otus.jetty.cache.CustomCacheListener;
 import ru.dankoy.otus.jetty.cache.CustomCacheListenerImpl;
-import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.core.model.AddressDataSet;
 import ru.dankoy.otus.jetty.core.model.PhoneDataSet;
 import ru.dankoy.otus.jetty.core.model.User;
+import ru.dankoy.otus.jetty.core.service.userservice.DbServiceUserCacheImpl;
+import ru.dankoy.otus.jetty.core.service.userservice.DbServiceUserImpl;
 import ru.dankoy.otus.jetty.h2.DataSourceH2;
-import ru.dankoy.otus.jetty.hibernate.cacheddao.CachedUserDaoHibernate;
 import ru.dankoy.otus.jetty.hibernate.dao.UserDaoHibernate;
 import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
 import ru.dankoy.otus.jetty.hibernate.utils.HibernateUtils;
@@ -62,8 +62,10 @@ public class WebServerBasicAuth {
         CustomCacheListener<Long, User> listener = new CustomCacheListenerImpl<>();
         cache.addListener(listener);
 
-        UserDao userDao = new UserDaoHibernate(sessionManagerHibernate);
-        UserDao cachedUserDaoHibernate = new CachedUserDaoHibernate(userDao, cache);
+        var userDao = new UserDaoHibernate(sessionManagerHibernate);
+        var dbServiceUser = new DbServiceUserImpl(userDao);
+        var cachedDbServiceUser = new DbServiceUserCacheImpl(dbServiceUser, cache);
+
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
                 .create();
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
@@ -73,8 +75,7 @@ public class WebServerBasicAuth {
         LoginService loginService = new HashLoginService(REALM_NAME, hashLoginServiceConfigPath);
 
         UsersWebServer usersWebServer = new UsersWebServerWithBasicAuth(WEB_SERVER_PORT, loginService,
-                cachedUserDaoHibernate,
-                gson, templateProcessor, sessionManagerHibernate);
+                cachedDbServiceUser, gson, templateProcessor);
 
         usersWebServer.start();
         usersWebServer.join();
