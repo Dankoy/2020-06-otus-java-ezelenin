@@ -6,6 +6,8 @@ import ru.dankoy.otus.jetty.core.dao.UserDao;
 import ru.dankoy.otus.jetty.core.model.User;
 import ru.dankoy.otus.jetty.core.service.DbServiceException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class DbServiceUserImpl implements DBServiceUser {
@@ -50,4 +52,24 @@ public class DbServiceUserImpl implements DBServiceUser {
             return Optional.empty();
         }
     }
+
+    @Override
+    public List<User> getAllUsers() {
+
+        try (var sessionManager = userDao.getSessionManager()) {
+            sessionManager.beginSession();
+            try {
+
+                List<User> users = userDao.getAllUsers();
+
+                logger.info("users: {}", users);
+                return users;
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                sessionManager.rollbackSession();
+            }
+            return new ArrayList<>();
+        }
+    }
+
 }
