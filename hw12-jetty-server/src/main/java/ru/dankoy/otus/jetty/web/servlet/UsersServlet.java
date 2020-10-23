@@ -17,6 +17,8 @@ import java.util.Map;
 public class UsersServlet extends HttpServlet {
 
     private static final String USERS_PAGE_TEMPLATE = "users.html";
+    private static final String TEMPLATE_USER_DATA_NAME = "users";
+    private static final String CONTENT_TYPE = "text/html";
 
     private final DBServiceUser dbServiceUser;
     private final TemplateProcessor templateProcessor;
@@ -35,9 +37,9 @@ public class UsersServlet extends HttpServlet {
         Map<String, Object> userMap = new HashMap<>();
         List<User> users = dbServiceUser.getAllUsers();
 
-        userMap.put("users", users);
+        userMap.put(TEMPLATE_USER_DATA_NAME, users);
 
-        response.setContentType("text/html");
+        response.setContentType(CONTENT_TYPE);
         response.getWriter().println(templateProcessor.getPage(USERS_PAGE_TEMPLATE, userMap));
 
     }
