@@ -22,6 +22,46 @@
         }
     </script>
 
+    <script>
+        function createNewUser() {
+            const newUserName = document.getElementById('newUserName');
+            const newUserAge = document.getElementById('newUserAge');
+            const newUserPhones = document.getElementById('newUserPhones');
+            const newUserAddress = document.getElementById('newUserAddress');
+
+            const name = newUserName.value;
+            const age = newUserAge.value;
+            const phones = newUserPhones.value;
+            const address = {
+                "street": newUserAddress.value
+            }
+
+            var phonesStringArray = phones.split(', ');
+            let phoneObjects = [];
+
+            phonesStringArray.forEach((function(part) {
+                phoneObjects.push({
+                    "number": part
+                })
+            }));
+
+            const json = JSON.stringify({
+                name: name,
+                age: age,
+                address: address,
+                phoneDataSets: phoneObjects
+            })
+
+            fetch('/api/user', {
+                method: "POST",
+                body: json
+            }).then(response => response.json())
+                .then(user => newUser.innerHTML = JSON.stringify(user));
+
+            console.log(json);
+        }
+    </script>
+
 </head>
 
 <body>
@@ -34,7 +74,37 @@
 <button onclick="getAllUsers()">Получить всех польователей</button>
 <pre id="userListDataContainer"></pre>
 
-<h4>Случайный пользователь</h4>
+<h4>Создать пользователя</h4>
+<pre id="newUser"></pre>
+<table style="width: 700px" border="2px">
+    <thead>
+    <tr>
+        <td style="width: 150px">Имя</td>
+        <td style="width: 100px">Возраст</td>
+        <td style="width: 100px">Телефоны</td>
+        <td style="width: 100px">Адрес</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <input type="text" id="newUserName" value="newUserName" placeholder="Введите имя пользователя">
+        </td>
+        <td>
+            <input type="number" id="newUserAge" value="123" placeholder="Введите возраст пользователя">
+        </td>
+        <td>
+            <input type="text" id="newUserPhones" value="телефон1, телефон2" placeholder="Введите телефоны пользователя через запятую">
+        </td>
+        <td>
+            <input type="text" id="newUserAddress" value="newUserAddress" placeholder="Введите возраст пользователя">
+        </td>
+    </tr>
+</table>
+<button onclick="createNewUser()">Создать пользователя</button>
+<pre id="createUser"></pre>
+
+<h4>Все пользователи</h4>
 <table style="width: 700px" border="2px">
     <thead>
     <tr>
