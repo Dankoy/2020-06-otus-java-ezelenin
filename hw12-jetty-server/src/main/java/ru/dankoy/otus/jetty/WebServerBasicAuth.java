@@ -17,6 +17,8 @@ import ru.dankoy.otus.jetty.core.model.PhoneDataSet;
 import ru.dankoy.otus.jetty.core.model.User;
 import ru.dankoy.otus.jetty.core.service.userservice.DbServiceUserCacheImpl;
 import ru.dankoy.otus.jetty.core.service.userservice.DbServiceUserImpl;
+import ru.dankoy.otus.jetty.flyway.MigrationsExecutor;
+import ru.dankoy.otus.jetty.flyway.MigrationsExecutorFlyway;
 import ru.dankoy.otus.jetty.h2.DataSourceH2;
 import ru.dankoy.otus.jetty.hibernate.dao.UserDaoHibernate;
 import ru.dankoy.otus.jetty.hibernate.sessionmanager.SessionManagerHibernate;
@@ -54,8 +56,8 @@ public class WebServerBasicAuth {
 
     public static void main(String[] args) throws Exception {
 
-        var dataSource = new DataSourceH2();
-        flywayMigrations(dataSource);
+        MigrationsExecutor migrationsExecutor = new MigrationsExecutorFlyway(HIBERNATE_CFG_FILE);
+        migrationsExecutor.executeMigrations();
 
         SessionManagerHibernate sessionManagerHibernate = getSessionManager();
 
@@ -92,17 +94,5 @@ public class WebServerBasicAuth {
         SessionFactory sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_FILE, User.class,
                 AddressDataSet.class, PhoneDataSet.class);
         return new SessionManagerHibernate(sessionFactory);
-    }
-
-
-    private static void flywayMigrations(DataSource dataSource) {
-        logger.info("db migration started...");
-        var flyway = Flyway.configure()
-                .dataSource(dataSource)
-                .locations("classpath:/db/migration")
-                .load();
-        flyway.migrate();
-        logger.info("db migration finished.");
-        logger.info("***");
     }
 }
