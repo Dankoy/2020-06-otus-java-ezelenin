@@ -57,7 +57,7 @@ public class AtmTest {
     public void testClaimMoneyFromAtm() throws Exception {
 
         List<Banknote> claimedMoney = atm.claimMoney(3170);
-        assertThat(claimedMoney).extracting(Banknote::getBill).hasSize(7).containsSequence(
+        assertThat(claimedMoney).extracting(Banknote::getBill).hasSize(7).contains(
                 Bill.HUNDRED, Bill.TEN, Bill.TEN, Bill.FIFTY, Bill.THOUSAND, Bill.THOUSAND, Bill.THOUSAND);
 
     }
