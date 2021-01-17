@@ -1,9 +1,12 @@
 package ru.dankoy.otus.appcontainer;
 
+import ru.dankoy.otus.appcontainer.api.AppComponent;
 import ru.dankoy.otus.appcontainer.api.AppComponentsContainer;
 import ru.dankoy.otus.appcontainer.api.AppComponentsContainerConfig;
 
+import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
@@ -34,4 +37,24 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     public <C> C getAppComponent(String componentName) {
         return null;
     }
+
+    /**
+     * Получает список методов с нужной аннотацией и сортирует их пополю order в аннотации @AppComponent
+     *
+     * @param clazz
+     * @return
+     */
+    public List<Method> getMethods(Class<?> clazz) {
+
+        final Method[] methods = clazz.getDeclaredMethods();
+
+        return Arrays.stream(methods).filter(method -> method.isAnnotationPresent(AppComponent.class))
+                .sorted(Comparator.comparing(method -> method.getAnnotation(AppComponent.class).order()))
+                .collect(Collectors.toList());
+
+    }
+
+
+
+
 }
