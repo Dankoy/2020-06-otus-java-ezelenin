@@ -1,5 +1,7 @@
 package ru.dankoy.otus.appcontainer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.dankoy.otus.appcontainer.api.AppComponent;
 import ru.dankoy.otus.appcontainer.api.AppComponentsContainer;
 import ru.dankoy.otus.appcontainer.api.AppComponentsContainerConfig;
@@ -12,6 +14,8 @@ import java.util.stream.Collectors;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
+    private static final Logger logger = LoggerFactory.getLogger(AppComponentsContainerImpl.class);
+
     private final List<Object> appComponents = new ArrayList<>();
     private final Map<String, Object> appComponentsByName = new HashMap<>();
 
@@ -21,7 +25,10 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
-        // You code here...
+        final Object instance = initInstanceConstructor(configClass);
+        List<Method> orderedMethodList = getMethods(configClass);
+        initComponents(instance, orderedMethodList);
+        System.out.println(appComponents);
     }
 
     private void checkConfigClass(Class<?> configClass) {
@@ -40,7 +47,6 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         return null;
     }
 
-    //TODO: Сделаль метод приватным
 
     /**
      * Получает список методов с нужной аннотацией и сортирует их пополю order в аннотации @AppComponent
@@ -48,7 +54,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
      * @param clazz
      * @return
      */
-    public List<Method> getMethods(Class<?> clazz) {
+    private List<Method> getMethods(Class<?> clazz) {
 
         final Method[] methods = clazz.getDeclaredMethods();
 
@@ -64,7 +70,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
      * @param method
      * @return
      */
-    public Object[] getMethodArguments(Method method) {
+    private Object[] getMethodArguments(Method method) {
 
         Object[] objects = new Object[method.getParameterCount()];
 
@@ -93,6 +99,24 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
             throw new AppComponentContainerException(
                     String.format("Failed to instantiate class %s", clazz.getCanonicalName()));
         }
+    }
+
+
+    private void initComponents(Object objectInstance, List<Method> methods) {
+
+        for (Method method: methods) {
+            final AppComponent componentInfo = method.getAnnotation(AppComponent.class);
+            try {
+                method.setAccessible(true);
+                Object component = method.invoke(objectInstance, getMethodArguments(method));
+                appComponents.add(component);
+            } catch (Exception e) {
+                logger.error("Error: {}", e.getMessage());
+                throw new AppComponentContainerException(String.format("Cannot create component '%s'", componentInfo.name()));
+            }
+
+        }
+
     }
 
 
