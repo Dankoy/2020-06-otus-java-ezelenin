@@ -42,9 +42,21 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         return null;
     }
 
+    /**
+     * Ищет объекты\компоненты в контексте, от которых могут зависеть другие компоненты
+     *
+     * @param componentName
+     * @param <C>
+     * @return
+     */
     @Override
     public <C> C getAppComponent(String componentName) {
-        return null;
+        C component = (C) appComponentsByName.get(componentName);
+        if (Objects.isNull(component)) {
+            throw new AppComponentContainerException(String.format("Component '%s' is not in context",
+                    componentName));
+        }
+        return component;
     }
 
 
@@ -77,9 +89,8 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         Parameter[] parameters = method.getParameters();
 
         for (int i = 0; i < parameters.length; i++) {
-            objects[i] = parameters[i].getType();
+            objects[i] = getAppComponent(parameters[i].getType());
         }
-
         return objects;
     }
 
@@ -101,18 +112,26 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         }
     }
 
-
+    /**
+     * Производит инициализацию компонентов конфигурационного класса
+     *
+     * @param objectInstance
+     * @param methods
+     */
     private void initComponents(Object objectInstance, List<Method> methods) {
 
-        for (Method method: methods) {
+        for (Method method : methods) {
             final AppComponent componentInfo = method.getAnnotation(AppComponent.class);
+            logger.info("Method: {}", method.getName());
             try {
                 method.setAccessible(true);
                 Object component = method.invoke(objectInstance, getMethodArguments(method));
                 appComponents.add(component);
             } catch (Exception e) {
                 logger.error("Error: {}", e.getMessage());
-                throw new AppComponentContainerException(String.format("Cannot create component '%s'", componentInfo.name()));
+                logger.error("Error: {}", e);
+                throw new AppComponentContainerException(
+                        String.format("Cannot create component '%s'", componentInfo.name()));
             }
 
         }
