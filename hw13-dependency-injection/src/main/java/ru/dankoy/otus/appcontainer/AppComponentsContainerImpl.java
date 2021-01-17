@@ -4,6 +4,7 @@ import ru.dankoy.otus.appcontainer.api.AppComponent;
 import ru.dankoy.otus.appcontainer.api.AppComponentsContainer;
 import ru.dankoy.otus.appcontainer.api.AppComponentsContainerConfig;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,6 +40,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     //TODO: Сделаль метод приватным
+
     /**
      * Получает список методов с нужной аннотацией и сортирует их пополю order в аннотации @AppComponent
      *
@@ -56,6 +58,22 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
 
+    /**
+     * Получает объект типа класса передаваемого в аргументах
+     *
+     * @param clazz
+     * @return
+     */
+    private Object initInstanceConstructor(Class<?> clazz) {
+        try {
+            Constructor<?> constructor = clazz.getConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (Exception e) {
+            throw new AppComponentContainerException(
+                    String.format("Failed to instantiate class %s", clazz.getCanonicalName()));
+        }
+    }
 
 
 }
