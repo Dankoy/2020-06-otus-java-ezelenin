@@ -6,6 +6,7 @@ import ru.dankoy.otus.appcontainer.api.AppComponentsContainerConfig;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,25 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                 .sorted(Comparator.comparing(method -> method.getAnnotation(AppComponent.class).order()))
                 .collect(Collectors.toList());
 
+    }
+
+    /**
+     * Получает массив из объектов аргументов метода
+     *
+     * @param method
+     * @return
+     */
+    public Object[] getMethodArguments(Method method) {
+
+        Object[] objects = new Object[method.getParameterCount()];
+
+        Parameter[] parameters = method.getParameters();
+
+        for (int i = 0; i < parameters.length; i++) {
+            objects[i] = parameters[i].getType();
+        }
+
+        return objects;
     }
 
 
