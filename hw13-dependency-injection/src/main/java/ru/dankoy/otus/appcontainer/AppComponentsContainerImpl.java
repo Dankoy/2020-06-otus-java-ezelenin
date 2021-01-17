@@ -38,6 +38,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         return null;
     }
 
+    //TODO: Сделаль метод приватным
     /**
      * Получает список методов с нужной аннотацией и сортирует их пополю order в аннотации @AppComponent
      *
