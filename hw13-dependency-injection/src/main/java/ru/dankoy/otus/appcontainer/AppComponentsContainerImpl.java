@@ -39,16 +39,15 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     @Override
     public <C> C getAppComponent(Class<C> componentClass) {
 
-        Optional<Object> optionalComponent =
-                appComponents.stream()
-                        .filter(object -> componentClass.isAssignableFrom(object.getClass()))
-                        .reduce((u, v) -> {
-                            throw new IllegalStateException("More than one ID found");
-                        });
-
-        return (C) optionalComponent.orElseThrow(() -> new AppComponentContainerException(String.format("Component " +
-                        "'%s' is not in context",
-                componentClass)));
+        try {
+            return (C) appComponents.stream().filter(object -> componentClass.isAssignableFrom(object.getClass()))
+                    .findFirst()
+                    .get();
+        } catch (Exception e) {
+            throw new AppComponentContainerException(String.format("Component " +
+                            "'%s' is not in context",
+                    componentClass));
+        }
     }
 
     /**
