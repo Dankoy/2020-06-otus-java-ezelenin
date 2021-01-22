@@ -147,6 +147,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                 method.setAccessible(true);
                 Object component = method.invoke(objectInstance, getMethodArguments(method));
                 appComponents.add(component);
+                appComponentsByName.put(componentInfo.name(), component);
             } catch (Exception e) {
                 logger.error("Error: {}", e.getMessage());
                 logger.error("Error: {}", e);
