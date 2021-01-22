@@ -1,22 +1,16 @@
 package ru.dankoy.otus.appcontainer;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.dankoy.otus.appcontainer.api.AppComponent;
 import ru.dankoy.otus.appcontainer.api.AppComponentsContainer;
 import ru.dankoy.otus.appcontainer.api.AppComponentsContainerConfig;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
@@ -42,24 +36,20 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         }
     }
 
-  @Override
-  public <C> C getAppComponent(Class<C> componentClass) {
+    @Override
+    public <C> C getAppComponent(Class<C> componentClass) {
 
-    Optional<Object> optionalComponent =
-        appComponents.stream()
-            .filter(object -> componentClass.isAssignableFrom(object.getClass()))
-            .reduce((u, v) -> {
-              throw new IllegalStateException("More than one ID found");
-            });
+        Optional<Object> optionalComponent =
+                appComponents.stream()
+                        .filter(object -> componentClass.isAssignableFrom(object.getClass()))
+                        .reduce((u, v) -> {
+                            throw new IllegalStateException("More than one ID found");
+                        });
 
-    if (optionalComponent.isEmpty()) {
-      throw new AppComponentContainerException(
-          String.format("Component '%s' is not in context",
-              componentClass));
-    } else {
-      return (C) optionalComponent.get();
+        return (C) optionalComponent.orElseThrow(() -> new AppComponentContainerException(String.format("Component " +
+                        "'%s' is not in context",
+                componentClass)));
     }
-  }
 
     /**
      * Ищет объекты\компоненты в контексте, от которых могут зависеть другие компоненты
