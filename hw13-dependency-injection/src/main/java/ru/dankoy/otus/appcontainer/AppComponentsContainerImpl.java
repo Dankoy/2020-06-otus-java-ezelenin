@@ -34,7 +34,6 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         final Object instance = initInstanceConstructor(configClass);
         List<Method> orderedMethodList = getMethods(configClass);
         initComponents(instance, orderedMethodList);
-        System.out.println(appComponents);
     }
 
     private void checkConfigClass(Class<?> configClass) {
