@@ -31,6 +31,7 @@ include 'L22-cache'
 include 'L23-noSQL'
 include 'L24-webServer'
 include 'L25-di'
+include 'L25-warMvc_202006'
 include 'L26-warMvc'
 include 'L27-websocket'
 
