@@ -5,7 +5,7 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_15
 targetCompatibility = JavaVersion.VERSION_15
 
-group 'ru.dankoy.otus'
+group 'ru.dankoy.otus.warmvc'
 version 'unspecified'
 
 repositories {
