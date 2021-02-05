@@ -65,3 +65,17 @@ war {
     archiveName 'app.war'
     from 'src/main/resources'
 }
+
+
+task deploylocal(dependsOn: war) {
+        def warName = "app"
+    def warDir = buildDir.getPath() + "/libs"
+    def tomcatDir = '/home/ezelenin/Development/tomcat/apache-tomcat-9.0.41/webapps'
+
+    println "Copy from ${warDir} into ${tomcatDir}"
+    copy{
+        from "$warDir"
+        into "$tomcatDir"
+        include '*.war'
+    }
+}
