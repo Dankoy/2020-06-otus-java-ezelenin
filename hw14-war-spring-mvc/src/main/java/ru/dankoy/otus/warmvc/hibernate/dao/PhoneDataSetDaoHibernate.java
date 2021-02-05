@@ -3,6 +3,7 @@ package ru.dankoy.otus.warmvc.hibernate.dao;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import ru.dankoy.otus.warmvc.core.dao.PhoneDataSetDao;
 import ru.dankoy.otus.warmvc.core.dao.UserDaoException;
 import ru.dankoy.otus.warmvc.core.model.PhoneDataSet;
@@ -12,6 +13,7 @@ import ru.dankoy.otus.warmvc.hibernate.sessionmanager.SessionManagerHibernate;
 
 import java.util.Optional;
 
+@Repository
 public class PhoneDataSetDaoHibernate implements PhoneDataSetDao {
 
     private static Logger logger = LoggerFactory.getLogger(PhoneDataSetDaoHibernate.class);
