@@ -6,7 +6,6 @@ import ru.dankoy.otus.warmvc.core.sessionmanager.DatabaseSession;
 
 import javax.persistence.criteria.CriteriaBuilder;
 
-
 public class DatabaseSessionHibernate implements DatabaseSession {
     private final Session session;
     private final Transaction transaction;
