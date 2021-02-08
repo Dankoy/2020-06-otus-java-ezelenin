@@ -3,7 +3,7 @@ package ru.dankoy.otus.warmvc.hibernate.dao;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.dankoy.otus.warmvc.core.dao.UserDao;
 import ru.dankoy.otus.warmvc.core.dao.UserDaoException;
 import ru.dankoy.otus.warmvc.core.model.User;
@@ -18,7 +18,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Repository
 public class UserDaoHibernate implements UserDao {
 
     private static Logger logger = LoggerFactory.getLogger(UserDaoHibernate.class);
