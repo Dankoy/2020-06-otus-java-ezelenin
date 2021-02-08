@@ -2,7 +2,7 @@ package ru.dankoy.otus.warmvc.core.service.userservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import ru.dankoy.otus.warmvc.core.dao.UserDao;
 import ru.dankoy.otus.warmvc.core.model.User;
 import ru.dankoy.otus.warmvc.core.service.DbServiceException;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Service
 public class DbServiceUserImpl implements DBServiceUser {
     private static final Logger logger = LoggerFactory.getLogger(DbServiceUserImpl.class);
 
