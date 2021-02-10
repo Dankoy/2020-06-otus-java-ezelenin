@@ -29,16 +29,4 @@ public class UserController {
         return "users.html";
     }
 
-//    @GetMapping("/client/create")
-//    public String clientCreateView(Model model) {
-//        model.addAttribute("client", new Client());
-//        return "clientCreate.html";
-//    }
-//
-//    @PostMapping("/client/save")
-//    public RedirectView clientSave(@ModelAttribute Client client) {
-//        clientService.save(client);
-//        return new RedirectView("/", true);
-//    }
-
 }
