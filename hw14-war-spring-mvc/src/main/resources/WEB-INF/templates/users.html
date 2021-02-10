@@ -1,13 +1,23 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Пользователи</title>
-    <script>
+
+    <script type="text/javascript" th:inline="javascript">
+
+        /*<![CDATA[*/
+        let contextPath = /*[[@{/}]]*/;
+        /*]]>*/
+        const pathToApi = contextPath + "api/user/";
+
+    </script>
+
+    <script type="text/javascript">
         function getUserById() {
             const userIdTextBox = document.getElementById('userIdTextBox');
             const userDataContainer = document.getElementById('userDataContainer');
             const id = userIdTextBox.value;
-            //fetch('api/user?id=' + id)
-            fetch('api/user/' + id)
+            fetch(pathToApi + id)
                 .then(response => response.json())
                 .then(user => userDataContainer.innerHTML = JSON.stringify(user));
         }
@@ -16,13 +26,17 @@
     <script>
         function getAllUsers() {
             const userDataContainer = document.getElementById('userListDataContainer');
-            fetch('api/user')
+            fetch(pathToApi)
                 .then(response => response.json())
                 .then(user => userDataContainer.innerHTML = JSON.stringify(user));
         }
     </script>
 
     <script>
+
+        console.log(pathToApi);
+        console.log(contextPath);
+
         function createNewUser() {
             const newUserName = document.getElementById('newUserName');
             const newUserAge = document.getElementById('newUserAge');
@@ -39,7 +53,7 @@
             var phonesStringArray = phones.split(', ');
             let phoneObjects = [];
 
-            phonesStringArray.forEach((function(part) {
+            phonesStringArray.forEach((function (part) {
                 phoneObjects.push({
                     "number": part
                 })
@@ -52,9 +66,12 @@
                 phoneDataSets: phoneObjects
             })
 
-            fetch('/api/user', {
+            fetch(pathToApi, {
                 method: "POST",
-                body: json
+                body: json,
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }
             }).then(response => response.json())
                 .then(user => newUser.innerHTML = JSON.stringify(user));
 
@@ -94,7 +111,8 @@
             <input type="number" id="newUserAge" value="123" placeholder="Введите возраст пользователя">
         </td>
         <td>
-            <input type="text" id="newUserPhones" value="телефон1, телефон2" placeholder="Введите телефоны пользователя через запятую">
+            <input type="text" id="newUserPhones" value="телефон1, телефон2"
+                   placeholder="Введите телефоны пользователя через запятую">
         </td>
         <td>
             <input type="text" id="newUserAddress" value="newUserAddress" placeholder="Введите возраст пользователя">
@@ -116,28 +134,20 @@
     </tr>
     </thead>
     <tbody>
-    <#list users as user>
-    <tr>
-        <td>${user.id}</td>
-        <td>${user.name}</td>
-        <td>${user.age}</td>
-        <#if user.phoneDataSets??>
-        <td>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"/>
+        <td th:text="${user.name}"/>
+        <td th:text="${user.age}"/>
+        <td th:with="phones=${user.phoneDataSets}">
             <table border="1px">
-                <#list user.phoneDataSets as phones>
-                <tr>
-                    <td>${phones.id}</td>
-                    <td>${phones.number}</td>
+                <tr th:each="phone : ${phones}">
+                    <td th:text="${phone.id}"/>
+                    <td th:text="${phone.number}"/>
                 </tr>
-                </#list>
             </table>
         </td>
-        </#if>
-        <#if user.address??>
-            <td>${user.address.street}</td>
-        </#if>
+        <td th:if="${!user.address.street.empty}" th:text="${user.address.street}"/>
     </tr>
-    </#list>
     </tbody>
 </table>
 </body>
