@@ -25,16 +25,14 @@ public class UserRestController {
     @GetMapping(value = {"/api/user"})
     public List<User> getClients() {
 
-        List<User> users = dbServiceUser.getAllUsers();
-
-        return users;
+        return dbServiceUser.getAllUsers();
     }
 
     @GetMapping(value = {"/api/user/{id}"})
     public User getUserById(@PathVariable(name = "id") long id) {
         Optional<User> optionalUser = dbServiceUser.getUser(id);
 
-        return optionalUser.get();
+        return optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @PostMapping(value = {"/api/user"})
@@ -55,8 +53,7 @@ public class UserRestController {
 
         Optional<User> foundUser = dbServiceUser.getUser(id);
 
-
-        return foundUser.get();
+        return foundUser.orElseThrow(() -> new RuntimeException("User not found"));
 
     }
 
