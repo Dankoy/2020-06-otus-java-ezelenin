@@ -1,6 +1,5 @@
 package ru.dankoy.otus.warmvc.web.controllers;
 
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +7,6 @@ import ru.dankoy.otus.warmvc.core.model.AddressDataSet;
 import ru.dankoy.otus.warmvc.core.model.PhoneDataSet;
 import ru.dankoy.otus.warmvc.core.model.User;
 import ru.dankoy.otus.warmvc.core.service.userservice.DBServiceUser;
-import ru.dankoy.otus.warmvc.web.serializator.CustomJsonSerializer;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,34 +17,29 @@ public class UserRestController {
     private static final Logger logger = LoggerFactory.getLogger(UserRestController.class);
 
     private final DBServiceUser dbServiceUser;
-    private final CustomJsonSerializer customJsonSerializer;
 
-    public UserRestController(DBServiceUser dbServiceUser, CustomJsonSerializer customJsonSerializatior) {
+    public UserRestController(DBServiceUser dbServiceUser) {
         this.dbServiceUser = dbServiceUser;
-        this.customJsonSerializer = customJsonSerializatior;
     }
 
-    @GetMapping(value = {"/api/user"}, produces = {"application/json"})
-    public String getClients() {
+    @GetMapping(value = {"/api/user"})
+    public List<User> getClients() {
 
         List<User> users = dbServiceUser.getAllUsers();
-        Gson gson = customJsonSerializer.getGson();
 
-        return gson.toJson(users);
+        return users;
     }
 
-    @GetMapping(value = {"/api/user/{id}"}, produces = {"application/json"})
-    public String getUserById(@PathVariable(name = "id") long id) {
+    @GetMapping(value = {"/api/user/{id}"})
+    public User getUserById(@PathVariable(name = "id") long id) {
         Optional<User> optionalUser = dbServiceUser.getUser(id);
 
-        Gson gson = customJsonSerializer.getGson();
-
-        return gson.toJson(optionalUser.get());
+        return optionalUser.get();
     }
 
-    @PostMapping(value = {"/api/user"}, produces = {"application/json"})
+    @PostMapping(value = {"/api/user"})
     @ResponseBody
-    public String saveNewUser(@RequestBody User user) {
+    public User saveNewUser(@RequestBody User user) {
 
         long newUserId = saveUser(user);
         return getNewUserFromDataBase(newUserId);
@@ -58,13 +51,12 @@ public class UserRestController {
      * @param id
      * @return
      */
-    private String getNewUserFromDataBase(long id) {
+    private User getNewUserFromDataBase(long id) {
 
         Optional<User> foundUser = dbServiceUser.getUser(id);
 
-        Gson gson = customJsonSerializer.getGson();
 
-        return gson.toJson(foundUser.get());
+        return foundUser.get();
 
     }
 
