@@ -1,12 +1,15 @@
 package ru.dankoy.otus.multithreading;
 
+import ru.dankoy.otus.multithreading.executors.ExecutorUsage;
 import ru.dankoy.otus.multithreading.monitor.MonitorUsage;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        monitorsDemo();
+//        monitorsDemo();
+
+        executorsDemo();
 
     }
 
@@ -19,6 +22,17 @@ public class Main {
 
         MonitorUsage monitorUsage = new MonitorUsage();
         monitorUsage.go();
+
+    }
+
+
+    /**
+     * Работа с ExecutorService
+     */
+    private static void executorsDemo() {
+
+        ExecutorUsage executorUsage = new ExecutorUsage();
+        executorUsage.go();
 
     }
 
