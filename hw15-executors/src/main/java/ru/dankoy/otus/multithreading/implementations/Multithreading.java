@@ -1,36 +1,30 @@
-package ru.dankoy.otus.multithreading.monitor;
+package ru.dankoy.otus.multithreading.implementations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * @author Evgeny
- * Пример работы двух потоков. Первый всегда печатает нечетные числа, а второк потом печатает четные числа.
+ * Общий класс для использования мониторов и ExecutorService
  */
-public class MonitorUsage {
+public abstract class Multithreading {
 
-    private static final Logger logger = LoggerFactory.getLogger(MonitorUsage.class);
+    private static final Logger logger = LoggerFactory.getLogger(Multithreading.class);
     private String lastStream = "second";
     private int count = 1;
     private boolean up = true; // флаг направления - true если прибавляем числа, false если отнимаем
 
     /**
-     * Точка старта
+     * Точка старта приложения
      */
-    public void go() {
-
-        new Thread(() -> this.action("first")).start();
-        new Thread(() -> this.action("second")).start();
-
-    }
+    public abstract void go();
 
     /**
      * Увеличивает или уменьшает счетчик в зависимости от текущего значения счетчика. Синхронизируется по имени потока.
      *
      * @param streamName
      */
-    private synchronized void action(String streamName) {
+    protected synchronized void action(String streamName) {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             try {
                 //spurious wakeup https://en.wikipedia.org/wiki/Spurious_wakeup
@@ -47,7 +41,7 @@ public class MonitorUsage {
                 notifyAll();
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-                throw new NotInterestingException(ex);
+                throw new Multithreading.NotInterestingException(ex);
             }
         }
     }

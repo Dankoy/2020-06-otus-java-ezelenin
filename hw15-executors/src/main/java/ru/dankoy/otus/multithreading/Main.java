@@ -1,7 +1,7 @@
 package ru.dankoy.otus.multithreading;
 
-import ru.dankoy.otus.multithreading.executors.ExecutorUsage;
-import ru.dankoy.otus.multithreading.monitor.MonitorUsage;
+import ru.dankoy.otus.multithreading.implementations.executors.ExecutorUsage;
+import ru.dankoy.otus.multithreading.implementations.monitor.MonitorUsage;
 
 public class Main {
 
