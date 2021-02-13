@@ -13,7 +13,7 @@ public class MonitorUsage {
     private static final Logger logger = LoggerFactory.getLogger(MonitorUsage.class);
     private String lastStream = "second";
     private int count = 1;
-    private boolean up = true;
+    private boolean up = true; // флаг направления - true если прибавляем числа, false если отнимаем
 
     /**
      * Точка старта
@@ -68,7 +68,7 @@ public class MonitorUsage {
     }
 
     /**
-     * Проверка направления счета. Когда достигли числа 10, то уменьшаем счетчик, если достигли числа 1. то
+     * Проверка направления счета. Когда достигли числа 10, то уменьшаем счетчик, если достигли числа 1, то
      * увеличиваем.
      */
     private void countModify() {
