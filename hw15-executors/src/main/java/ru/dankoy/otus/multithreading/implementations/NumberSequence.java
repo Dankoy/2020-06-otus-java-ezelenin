@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
  * @author Evgeny
  * Общий класс для использования мониторов и ExecutorService
  */
-public abstract class Multithreading {
+public abstract class NumberSequence {
 
-    private static final Logger logger = LoggerFactory.getLogger(Multithreading.class);
+    private static final Logger logger = LoggerFactory.getLogger(NumberSequence.class);
     private String lastStream = "second";
     private int count = 1;
     private boolean up = true; // флаг направления - true если прибавляем числа, false если отнимаем
@@ -41,7 +41,7 @@ public abstract class Multithreading {
                 notifyAll();
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-                throw new Multithreading.NotInterestingException(ex);
+                throw new NumberSequence.NotInterestingException(ex);
             }
         }
     }
