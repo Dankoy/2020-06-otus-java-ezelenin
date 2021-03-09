@@ -2,7 +2,7 @@ public interface Versions {
     String guava = "29.0-jre";
     String junitJupiterApi = "5.6.2";
     String junitJupiterEngine = "5.6.2";
-    String springBoot = "2.3.1";
+    String springBoot = "2.3.8";
     String jmh = "1.23";
     String jol = "0.10";
     String asm = "8.0.1";
@@ -19,4 +19,5 @@ public interface Versions {
     String sockjs = "1.1.2";
     String stomp = "2.3.3-1";
     String bootstrap = "4.4.1-1";
+    String reflections = "0.9.11";
 }
