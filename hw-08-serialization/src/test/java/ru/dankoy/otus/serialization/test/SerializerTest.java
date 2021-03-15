@@ -58,7 +58,6 @@ public class SerializerTest {
     void customTest(Object o) throws IOException {
         Gson gson = new Gson();
         Serializer serializer = new Serializer();
-        System.out.println(serializer.serializeObject(o));
         assertThat(serializer.serializeObject(o)).isEqualTo(gson.toJson(o));
     }
 
