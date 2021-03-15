@@ -13,6 +13,7 @@ public class GuineaPig {
     private Map<String, Integer> someMap;
     private boolean bool;
     private Boolean bool2;
+    private int[] intArray;
 
 
     public static GuineaPigBuilder newBuilder() {
@@ -62,6 +63,11 @@ public class GuineaPig {
 
         public GuineaPigBuilder setBool2(Boolean bool) {
             GuineaPig.this.bool2 = bool;
+            return this;
+        }
+
+        public GuineaPigBuilder setIntArray(int[] array) {
+            GuineaPig.this.intArray = array;
             return this;
         }
 
