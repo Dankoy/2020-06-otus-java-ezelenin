@@ -5,21 +5,11 @@ import ru.dankoy.otus.serialization.guineapig.GuineaPig;
 import ru.dankoy.otus.serialization.serializer.Serializer;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-
-        GuineaPig guineaPig2 =
-                GuineaPig.newBuilder()
-                        .setAge(15)
-                        .setName("name2")
-                        .setSomeList(List.of("str123", "str243"))
-                        .setBool(true)
-                        .setBool2(false)
-                        .build();
+    public static void main(String[] args) throws IOException {
 
         GuineaPig guineaPig =
                 GuineaPig.newBuilder()
@@ -30,8 +20,8 @@ public class Main {
                         .setSomeList3(List.of(4, "234", false, 110.43))
                         .setBool(true)
                         .setBool2(false)
+                        .setIntArray(new int[]{1, 2, 3})
                         .build();
-
 
 
         Serializer serializer = new Serializer();
@@ -41,8 +31,6 @@ public class Main {
 
         Gson gson = new Gson();
         System.out.println(gson.toJson(guineaPig));
-
-
 
     }
 
