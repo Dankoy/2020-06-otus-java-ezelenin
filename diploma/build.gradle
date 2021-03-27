@@ -40,6 +40,9 @@ dependencies {
     implementation("com.zaxxer:HikariCP")
     implementation("com.h2database:h2")
     implementation('org.flywaydb:flyway-core')
+
+    implementation('org.postgresql:postgresql:42.2.19')
+
 }
 
 test {
