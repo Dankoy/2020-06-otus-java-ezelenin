@@ -33,7 +33,7 @@ public class CrashDaoHibernateImpl implements CrashDao {
      * @throws SessionManagerException
      */
     @Override
-    public List<Crash> getAllCrashes() throws SessionManagerException {
+    public List<Crash> getAllCrashes() {
 
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         CriteriaBuilder criteriaBuilder = currentSession.getCriteriaBuilder();
@@ -56,7 +56,7 @@ public class CrashDaoHibernateImpl implements CrashDao {
      * @throws SessionManagerException
      */
     @Override
-    public List<Crash> getAllCrashesWithNonMotorists() throws SessionManagerException {
+    public List<Crash> getAllCrashesWithNonMotorists() {
 
         DatabaseSessionHibernate currentSession = sessionManager.getCurrentSession();
         CriteriaBuilder criteriaBuilder = currentSession.getCriteriaBuilder();
