@@ -1,6 +1,6 @@
 package ru.dankoy.otus.diploma.core.sessionmanager;
 
-public interface SessionManager {
+public interface SessionManager extends AutoCloseable {
 
     void beginSession();
 
