@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Date;
+import java.util.Objects;
 
 /**
  * @author ezelenin
@@ -13,7 +15,7 @@ import java.sql.Date;
  */
 @Entity
 @Table(name = "crashes")
-public class Crash {
+public class Crash implements Serializable {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -184,71 +186,15 @@ public class Crash {
 
     public Crash() {}
 
-//    public Crash(String reportNumber, String localCaseNumber, String agencyName, String acrsReportType,
-//            Date crashDateTime, String hitRun, String routeType, Double milePoint, String milePointDirection,
-//            String laneDirection, int laneNumber, int numberOfLanes, String laneType, String direction,
-//            Double distance, String distanceUnit, String roadGrade, String nonTraffic, String roadName,
-//            String crossStreetType, String crossStreetName, String offRoadDescription, String municipality,
-//            String relatedNonMotorist, String atFault, String collisionType, String weather, String light,
-//            String surfaceCondition, String trafficControl, String driverSubstanceAbuse,
-//            String nonMotoristSubstanceAbuse, String firstHarmfulEvent, String secondHarmfulEvent,
-//            String fixedObjectStruck, String junction, String intersectionType, String intersectionArea,
-//            String roadAlignment, String roadCondition, String roadDivision, double latitude, double longitude,
-//            String geolocation) {
-//        this.reportNumber = reportNumber;
-//        this.localCaseNumber = localCaseNumber;
-//        this.agencyName = agencyName;
-//        this.acrsReportType = acrsReportType;
-//        this.crashDateTime = crashDateTime;
-//        this.hitRun = hitRun;
-//        this.routeType = routeType;
-//        this.milePoint = milePoint;
-//        this.milePointDirection = milePointDirection;
-//        this.laneDirection = laneDirection;
-//        this.laneNumber = laneNumber;
-//        this.numberOfLanes = numberOfLanes;
-//        this.laneType = laneType;
-//        this.direction = direction;
-//        this.distance = distance;
-//        this.distanceUnit = distanceUnit;
-//        this.roadGrade = roadGrade;
-//        this.nonTraffic = nonTraffic;
-//        this.roadName = roadName;
-//        this.crossStreetType = crossStreetType;
-//        this.crossStreetName = crossStreetName;
-//        this.offRoadDescription = offRoadDescription;
-//        this.municipality = municipality;
-//        this.relatedNonMotorist = relatedNonMotorist;
-//        this.atFault = atFault;
-//        this.collisionType = collisionType;
-//        this.weather = weather;
-//        this.light = light;
-//        this.surfaceCondition = surfaceCondition;
-//        this.trafficControl = trafficControl;
-//        this.driverSubstanceAbuse = driverSubstanceAbuse;
-//        this.nonMotoristSubstanceAbuse = nonMotoristSubstanceAbuse;
-//        this.firstHarmfulEvent = firstHarmfulEvent;
-//        this.secondHarmfulEvent = secondHarmfulEvent;
-//        this.fixedObjectStruck = fixedObjectStruck;
-//        this.junction = junction;
-//        this.intersectionType = intersectionType;
-//        this.intersectionArea = intersectionArea;
-//        this.roadAlignment = roadAlignment;
-//        this.roadCondition = roadCondition;
-//        this.roadDivision = roadDivision;
-//        this.latitude = latitude;
-//        this.longitude = longitude;
-//        this.geolocation = geolocation;
-//    }
-
     @Override
     public String toString() {
+        String o = null;
         try {
-            return mapper.writeValueAsString(this);
+            o = mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return "";
+        return o;
     }
 
     public String getReportNumber() {
@@ -601,5 +547,19 @@ public class Crash {
 
     public void setGeolocation(String geolocation) {
         this.geolocation = geolocation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Crash crash = (Crash) o;
+        return Double.compare(crash.latitude, latitude) == 0 && Double
+                .compare(crash.longitude, longitude) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(latitude, longitude);
     }
 }
