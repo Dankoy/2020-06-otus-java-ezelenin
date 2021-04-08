@@ -2,6 +2,7 @@ package ru.dankoy.otus.diploma.core.hibernate.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import ru.dankoy.otus.diploma.core.dao.CrashDao;
 import ru.dankoy.otus.diploma.core.hibernate.sessionmanager.DatabaseSessionHibernate;
 import ru.dankoy.otus.diploma.core.hibernate.sessionmanager.SessionManagerHibernate;
@@ -15,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+@Repository
 public class CrashDaoHibernateImpl implements CrashDao {
 
     private static Logger logger = LoggerFactory.getLogger(CrashDaoHibernateImpl.class);
