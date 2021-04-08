@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'war'
 }
 
 sourceCompatibility = JavaVersion.VERSION_13
@@ -26,6 +26,7 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation("org.thymeleaf:thymeleaf")
     implementation("org.thymeleaf:thymeleaf-spring5")
+    providedCompile("javax.servlet:javax.servlet-api")
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
@@ -54,6 +55,10 @@ test {
     }
 }
 
+war {
+    archiveName 'diploma.war'
+    from 'src/main/resources'
+}
 
 compileJava.options.encoding = 'UTF-8'
 
