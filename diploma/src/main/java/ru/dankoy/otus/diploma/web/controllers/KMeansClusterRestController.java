@@ -28,6 +28,16 @@ public class KMeansClusterRestController {
         return kMeans.cluster(crashes, 15);
     }
 
+    @GetMapping(value = "/cluster/kmeans/all/{clusterSize}")
+    public List<Cluster> getClustersForEverythingByClusterSize(
+            @PathVariable(name = "clusterSize") int clusterSize) throws Exception {
+        List<Crash> crashes = dbServiceCrash.getAllCrashes();
+
+        KMeansImpl kMeans = new KMeansImpl();
+
+        return kMeans.cluster(crashes, clusterSize);
+    }
+
     @GetMapping(value = "/cluster/kmeans/nonmotorist")
     public List<Cluster> getClustersForNonMotorists() throws Exception {
         List<Crash> crashes = dbServiceCrash.getCrashesWithNonMotorists();
