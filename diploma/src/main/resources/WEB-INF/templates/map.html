@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Анализ геоданных на выборке из ДТП штата Мэриленд</title>
 
-    <link rel="stylesheet" th:href="@{/static/leaflet/leaflet.css}"/>
-    <script th:src="@{/static/leaflet/leaflet-src.js}"></script>
+    <link rel="stylesheet" th:href="@{/static/leaflet/1.6.0/leaflet.css}"/>
+    <script th:src="@{/static/leaflet/1.6.0/leaflet-src.js}"></script>
 
     <script type="text/javascript" th:inline="javascript">
 
@@ -20,12 +20,35 @@
 
 <body onload="initMap()">
 
-<pre id="clusters"></pre>
-
 <div id="mapid"></div>
+
+<div id="zoomLevel">
+    <table id="zoomToClusterTable">
+        <thead>
+        <tr>
+            <td>
+                zoom
+            </td>
+            <td>
+                clusters
+            </td>
+        </tr>
+        </thead>
+        <tr>
+            <td id="zoom">
+
+            </td>
+            <td id="cluster">
+
+            </td>
+        </tr>
+    </table>
+</div>
 
 
 <script type="text/javascript" th:inline="javascript">
+
+    const defaultZoom = 8;
 
     const zoom_relations = {
         "3": {
@@ -47,13 +70,13 @@
         }, "11": {
             clusterSize: 18
         }, "12": {
-            clusterSize: 18
+            clusterSize: 22
         }, "13": {
-            clusterSize: 23
+            clusterSize: 30
         }, "14": {
-            clusterSize: 23
+            clusterSize: 30
         }, "15": {
-            clusterSize: 21
+            clusterSize: 25
         }, "16": {
             clusterSize: 21
         }, "17": {
@@ -78,37 +101,17 @@
         OpenStreetMap_Mapnik.addTo(map);
         L.control.scale().addTo(map);
 
-        map.setView([39.0458, -76.6413], 6);
+        map.setView([39.0458, -76.6413], defaultZoom);
 
         // маркеры
-
         var markers = [];
+
+        printMarkersDelegate(map, markers);
 
         // Получение зумма и класетров
         // логики в другом методе не сделать
         async function onZoomend() {
-            var currentZoom = map.getZoom();
-            // document.getElementById("zlevel").innerHTML=currentZoom;
-            var clusters = await getClustersByClusterSize(zoom_relations[currentZoom].clusterSize);
-
-            console.log(markers.length);
-
-            // очистка от старых маркеров
-            markers.forEach(marker => {
-                console.log(marker);
-                map.removeLayer(marker);
-            });
-
-            // map.removeLayer(markers);
-
-            addMarkersToMap(clusters, markers);
-
-            // рисование новых маркеров
-            markers.forEach(marker => {
-                marker.addTo(map);
-            })
-
-
+            await printMarkersDelegate(map, markers);
         }
 
         map.on('zoomend', onZoomend);
@@ -117,7 +120,15 @@
 
     function getClustersByClusterSize(clusterSize) {
         const kmeansNonMotoristByClusterSize = 'nonmotorist/'
-        const clusterContainer = document.getElementById('clusters');
+        return fetch(pathToApi + kmeansNonMotoristByClusterSize + clusterSize)
+            .then(response => response.json())
+            .then(cluster => JSON.stringify(cluster))
+            .then(cluster => JSON.parse(cluster));
+
+    }
+
+    function getClustersByClusterSizeAll(clusterSize) {
+        const kmeansNonMotoristByClusterSize = 'all/'
         return fetch(pathToApi + kmeansNonMotoristByClusterSize + clusterSize)
             .then(response => response.json())
             .then(cluster => JSON.stringify(cluster))
@@ -131,14 +142,55 @@
 
         clusters.forEach(
             cluster => {
-                var marker = new L.marker([cluster.latitude, cluster.longitude]);
+
+                var popup = "<b style='font-size:10pt;'>Amount of accidents: </b>" + cluster.points.length +
+                    "<br> <i style='font-size:7pt;'>Latitude:" + cluster.latitude + "</i>" +
+                    "<br> <i style='font-size:7pt;'>Longitude:" + cluster.longitude + "</i>";
+
+                // Creating Marker Options
+                var markerOptions = {
+                    title: "Amount of accidents: " + cluster.points.length,
+                    clickable: true,
+                    draggable: false,
+                    riseOnHover: true
+                }
+
+                var marker = new L.marker([cluster.latitude, cluster.longitude], markerOptions).bindPopup(popup);
+
+                marker.on('mouseover', function (ev) {
+                    marker.openPopup();
+                });
+
                 markers.push(marker);
             }
         )
-        console.log(markers.length);
 
         return markers;
 
+    }
+
+     async function printMarkersDelegate(map, markers) {
+        var currentZoom = map.getZoom();
+
+        document.getElementById('zoom').innerHTML = currentZoom;
+        document.getElementById('cluster').innerHTML = zoom_relations[currentZoom].clusterSize;
+
+        var clusters = await getClustersByClusterSize(zoom_relations[currentZoom].clusterSize);
+        // var clusters = await getClustersByClusterSizeAll(zoom_relations[currentZoom].clusterSize);
+
+        // очистка от старых маркеров
+        markers.forEach(marker => {
+            map.removeLayer(marker);
+        });
+
+        // map.removeLayer(markers);
+
+        addMarkersToMap(clusters, markers);
+
+        // рисование новых маркеров
+        markers.forEach(marker => {
+            marker.addTo(map);
+        })
     }
 
 
@@ -157,10 +209,19 @@
 
     #mapid {
         position: absolute;
-        bottom: 0;
-        height: 600px;
-        width: 800px;
+        /*bottom: 10px;*/
+        height: 100%;
+        width: 45%;
     }
+
+    #zoomLevel {
+        float: right;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+    }
+
 </style>
 
 </html>
