@@ -11,5 +11,9 @@ public interface CrashDao {
 
     List<Crash> getAllCrashesWithNonMotorists();
 
+    List<Crash> getCrashesWithNonMotoristsInMapBounds(double north, double south, double west, double east);
+
+    List<Crash> getAllCrashesInMapBounds(double north, double south, double west, double east);
+
     SessionManager getSessionManager();
 }

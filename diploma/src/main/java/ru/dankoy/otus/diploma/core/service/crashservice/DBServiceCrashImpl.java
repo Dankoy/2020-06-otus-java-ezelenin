@@ -55,5 +55,37 @@ public class DBServiceCrashImpl implements DBServiceCrash {
 
     }
 
+    @Override
+    public List<Crash> getCrashesWithNonMotoristsInMapBounds(double north, double south, double west, double east) {
+
+        try (var sessionManager = crashDao.getSessionManager()) {
+            sessionManager.beginSession();
+            try {
+                return crashDao.getCrashesWithNonMotoristsInMapBounds(north, south, west, east);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                sessionManager.rollbackSession();
+            }
+            return new ArrayList<>();
+        }
+
+    }
+
+    @Override
+    public List<Crash> getAllCrashesInMapBounds(double north, double south, double west, double east) {
+
+        try (var sessionManager = crashDao.getSessionManager()) {
+            sessionManager.beginSession();
+            try {
+                return crashDao.getAllCrashesInMapBounds(north, south, west, east);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                sessionManager.rollbackSession();
+            }
+            return new ArrayList<>();
+        }
+
+    }
+
 
 }
