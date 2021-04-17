@@ -62,17 +62,17 @@
         }, "7": {
             clusterSize: 7
         }, "8": {
-            clusterSize: 8
-        }, "9": {
-            clusterSize: 15
-        }, "10": {
-            clusterSize: 18
-        }, "11": {
-            clusterSize: 18
-        }, "12": {
-            clusterSize: 22
-        }, "13": {
             clusterSize: 30
+        }, "9": {
+            clusterSize: 30
+        }, "10": {
+            clusterSize: 30
+        }, "11": {
+            clusterSize: 28
+        }, "12": {
+            clusterSize: 28
+        }, "13": {
+            clusterSize: 26
         }, "14": {
             clusterSize: 30
         }, "15": {
@@ -89,6 +89,10 @@
     }
 
     function initMap() {
+
+        // Инициализация пустого массива маркеров
+        var markers = [];
+
         var map = L.map('mapid');
 
         var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -103,9 +107,7 @@
 
         map.setView([39.0458, -76.6413], defaultZoom);
 
-        // маркеры
-        var markers = [];
-
+        // Первоначальная отрисоква карты с маркерами
         printMarkersDelegate(map, markers);
 
         // Получение зумма и класетров
@@ -114,10 +116,25 @@
             await printMarkersDelegate(map, markers);
         }
 
+        async function onDragend() {
+            await printMarkersDelegate(map, markers)
+        }
+
+        // Перерисовка карты, когда меняется зум
         map.on('zoomend', onZoomend);
+
+        // Перерисовка карты, когда меняются координаты карты
+        map.on('dragend', onDragend);
 
     }
 
+    /**
+     *
+     * Получение кластеров по авариям с пешеходами по размеру кластера
+     *
+     * @param clusterSize
+     * @returns {Promise<string>}
+     */
     function getClustersByClusterSize(clusterSize) {
         const kmeansNonMotoristByClusterSize = 'nonmotorist/'
         return fetch(pathToApi + kmeansNonMotoristByClusterSize + clusterSize)
@@ -127,6 +144,35 @@
 
     }
 
+    /**
+     *
+     * Получение кластеров по авариям с пешеходами по размеру кластера и по границам карты
+     *
+     * @param clusterSize количество кластеров
+     * @param north координата севера
+     * @param south координата юга
+     * @param west координата запада
+     * @param east координата востока
+     * @returns {Promise<string>}
+     */
+    function getClustersByClusterSizeAndMapBounds(clusterSize, north, south, west, east) {
+        const kmeansNonMotoristByClusterSize = 'nonmotorist/'
+
+        const finalUrl = pathToApi + kmeansNonMotoristByClusterSize + clusterSize + "?north=" + north + "&south=" + south + "&west=" + west + "&east=" + east;
+
+        return fetch(finalUrl)
+            .then(response => response.json())
+            .then(cluster => JSON.stringify(cluster))
+            .then(cluster => JSON.parse(cluster));
+
+    }
+
+    /**
+     * Получение кластеров по всем событиям ДТП по размеру кластера
+     *
+     * @param clusterSize
+     * @returns {Promise<string>}
+     */
     function getClustersByClusterSizeAll(clusterSize) {
         const kmeansNonMotoristByClusterSize = 'all/'
         return fetch(pathToApi + kmeansNonMotoristByClusterSize + clusterSize)
@@ -136,6 +182,35 @@
 
     }
 
+    /**
+     * Получение кластеров по всем событиям ДТП по размеру кластера и по границам карты
+     *
+     * @param clusterSize
+     * @param north координата севера
+     * @param south координата юга
+     * @param west координата запада
+     * @param east координата востока
+     * @returns {Promise<string>}
+     */
+    function getClustersByClusterSizeAndMapBoundsAll(clusterSize, north, south, west, east) {
+        const kmeansAll = 'all/'
+
+        const finalUrl = pathToApi + kmeansAll + clusterSize + "?north=" + north + "&south=" + south + "&west=" + west + "&east=" + east;
+        return fetch(finalUrl)
+            .then(response => response.json())
+            .then(cluster => JSON.stringify(cluster))
+            .then(cluster => JSON.parse(cluster));
+
+    }
+
+    /**
+     * Конвертация списка кластеров в список маркеров для отрисовки на карте. В всплывающее меню маркера добавлен lat,
+     * long кластера, а так же количество событий в кластере.
+     *
+     * @param clusters
+     * @param markers
+     * @returns {*}
+     */
     function addMarkersToMap(clusters, markers) {
 
         markers.length = 0;
@@ -169,21 +244,34 @@
 
     }
 
-     async function printMarkersDelegate(map, markers) {
-        var currentZoom = map.getZoom();
+    /**
+     * Отрисовка маркеров на карте
+     *
+     * @param map
+     * @param markers
+     * @returns {Promise<void>}
+     */
+    async function printMarkersDelegate(map, markers) {
+
+        const currentZoom = map.getZoom();
+
+        const north = map.getBounds().getNorth(); //
+        const south = map.getBounds().getSouth();
+        const west = map.getBounds().getWest();
+        const east = map.getBounds().getEast();
 
         document.getElementById('zoom').innerHTML = currentZoom;
         document.getElementById('cluster').innerHTML = zoom_relations[currentZoom].clusterSize;
 
-        var clusters = await getClustersByClusterSize(zoom_relations[currentZoom].clusterSize);
+        // var clusters = await getClustersByClusterSize(zoom_relations[currentZoom].clusterSize);
+        var clusters = await getClustersByClusterSizeAndMapBounds(zoom_relations[currentZoom].clusterSize, north, south, west, east);
+        // var clusters = await getClustersByClusterSizeAndMapBoundsAll(zoom_relations[currentZoom].clusterSize, north, south, west, east);
         // var clusters = await getClustersByClusterSizeAll(zoom_relations[currentZoom].clusterSize);
 
         // очистка от старых маркеров
         markers.forEach(marker => {
             map.removeLayer(marker);
         });
-
-        // map.removeLayer(markers);
 
         addMarkersToMap(clusters, markers);
 
@@ -211,7 +299,7 @@
         position: absolute;
         /*bottom: 10px;*/
         height: 100%;
-        width: 45%;
+        width: 70%;
     }
 
     #zoomLevel {
