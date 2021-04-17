@@ -19,15 +19,6 @@ public class KMeansClusterRestController {
         this.dbServiceCrash = dbServiceCrash;
     }
 
-    @GetMapping(value = "/cluster/kmeans/all")
-    public List<Cluster> getClustersForEverything() throws Exception {
-        List<Crash> crashes = dbServiceCrash.getAllCrashes();
-
-        KMeansImpl kMeans = new KMeansImpl();
-
-        return kMeans.cluster(crashes, 15);
-    }
-
     @GetMapping(value = "/cluster/kmeans/all/{clusterSize}")
     public List<Cluster> getClustersForEverythingByClusterSize(
             @PathVariable(name = "clusterSize") int clusterSize) throws Exception {
@@ -36,15 +27,6 @@ public class KMeansClusterRestController {
         KMeansImpl kMeans = new KMeansImpl();
 
         return kMeans.cluster(crashes, clusterSize);
-    }
-
-    @GetMapping(value = "/cluster/kmeans/nonmotorist")
-    public List<Cluster> getClustersForNonMotorists() throws Exception {
-        List<Crash> crashes = dbServiceCrash.getCrashesWithNonMotorists();
-
-        KMeansImpl kMeans = new KMeansImpl();
-
-        return kMeans.cluster(crashes, 15);
     }
 
     @GetMapping(value = "/cluster/kmeans/nonmotorist/{clusterSize}")
