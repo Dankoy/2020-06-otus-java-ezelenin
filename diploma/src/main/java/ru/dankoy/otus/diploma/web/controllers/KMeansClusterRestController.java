@@ -2,6 +2,7 @@ package ru.dankoy.otus.diploma.web.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.dankoy.otus.diploma.cluster.Cluster;
 import ru.dankoy.otus.diploma.clusteralgorithms.kmeans.KMeansImpl;
@@ -14,6 +15,7 @@ import java.util.List;
 public class KMeansClusterRestController {
 
     private final DBServiceCrash dbServiceCrash;
+    private static final KMeansImpl kMeans = new KMeansImpl();
 
     public KMeansClusterRestController(DBServiceCrash dbServiceCrash) {
         this.dbServiceCrash = dbServiceCrash;
@@ -24,7 +26,17 @@ public class KMeansClusterRestController {
             @PathVariable(name = "clusterSize") int clusterSize) throws Exception {
         List<Crash> crashes = dbServiceCrash.getAllCrashes();
 
-        KMeansImpl kMeans = new KMeansImpl();
+        return kMeans.cluster(crashes, clusterSize);
+    }
+
+    @GetMapping(value = "/cluster/kmeans/all/{clusterSize}", params = {"north", "south", "west", "east"})
+    public List<Cluster> getClustersForEverythingByClusterSizeAndMapBounds(
+            @PathVariable(name = "clusterSize") int clusterSize, @RequestParam(name = "north") double north,
+            @RequestParam(name = "south") double south,
+            @RequestParam(name = "west") double west,
+            @RequestParam(name = "east") double east) throws Exception {
+
+        List<Crash> crashes = dbServiceCrash.getAllCrashesInMapBounds(north, south, west, east);
 
         return kMeans.cluster(crashes, clusterSize);
     }
@@ -34,7 +46,18 @@ public class KMeansClusterRestController {
             @PathVariable(name = "clusterSize") int clusterSize) throws Exception {
         List<Crash> crashes = dbServiceCrash.getCrashesWithNonMotorists();
 
-        KMeansImpl kMeans = new KMeansImpl();
+        return kMeans.cluster(crashes, clusterSize);
+    }
+
+
+    @GetMapping(value = "/cluster/kmeans/nonmotorist/{clusterSize}", params = {"north", "south", "west", "east"})
+    public List<Cluster> getClustersForNonMotoristsByClusterSizeAndMapBounds(
+            @PathVariable(name = "clusterSize") int clusterSize, @RequestParam(name = "north") double north,
+            @RequestParam(name = "south") double south,
+            @RequestParam(name = "west") double west,
+            @RequestParam(name = "east") double east) throws Exception {
+
+        List<Crash> crashes = dbServiceCrash.getCrashesWithNonMotoristsInMapBounds(north, south, west, east);
 
         return kMeans.cluster(crashes, clusterSize);
     }
