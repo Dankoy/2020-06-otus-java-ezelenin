@@ -184,7 +184,8 @@ public class Crash implements Serializable {
     @Column(name = "geolocation")
     private String geolocation;
 
-    public Crash() {}
+    public Crash() {
+    }
 
     @Override
     public String toString() {

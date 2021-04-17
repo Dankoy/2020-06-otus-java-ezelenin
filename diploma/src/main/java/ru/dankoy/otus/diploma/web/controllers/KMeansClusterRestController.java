@@ -14,8 +14,8 @@ import java.util.List;
 @RestController
 public class KMeansClusterRestController {
 
-    private final DBServiceCrash dbServiceCrash;
     private static final KMeansImpl kMeans = new KMeansImpl();
+    private final DBServiceCrash dbServiceCrash;
 
     public KMeansClusterRestController(DBServiceCrash dbServiceCrash) {
         this.dbServiceCrash = dbServiceCrash;

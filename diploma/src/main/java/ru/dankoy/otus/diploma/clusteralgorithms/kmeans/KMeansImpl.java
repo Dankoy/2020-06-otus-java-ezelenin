@@ -31,10 +31,9 @@ import java.util.List;
  */
 public class KMeansImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(KMeansImpl.class);
-
     // Радиус земли в метрах
     public static final double EARTH_RADIUS = 6372.8 * 1000;
+    private static final Logger logger = LoggerFactory.getLogger(KMeansImpl.class);
 
     /**
      * Главный метод класса.

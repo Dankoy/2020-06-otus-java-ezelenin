@@ -20,7 +20,7 @@ import java.util.List;
 @Repository
 public class CrashDaoHibernateImpl implements CrashDao {
 
-    private static Logger logger = LoggerFactory.getLogger(CrashDaoHibernateImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CrashDaoHibernateImpl.class);
 
     private final SessionManagerHibernate sessionManager;
 

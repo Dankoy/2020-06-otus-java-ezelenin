@@ -10,8 +10,8 @@ import ru.dankoy.otus.diploma.core.sessionmanager.SessionManagerException;
 @Component
 public class SessionManagerHibernate implements SessionManager {
 
-    private DatabaseSessionHibernate databaseSession;
     private final SessionFactory sessionFactory;
+    private DatabaseSessionHibernate databaseSession;
 
     public SessionManagerHibernate(SessionFactory sessionFactory) {
         if (sessionFactory == null) {

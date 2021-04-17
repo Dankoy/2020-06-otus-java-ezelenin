@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public class MigrationsExecutorFlyway implements MigrationsExecutor {
 
-    private static Logger logger = LoggerFactory.getLogger(MigrationsExecutorFlyway.class);
+    private static final Logger logger = LoggerFactory.getLogger(MigrationsExecutorFlyway.class);
 
     private final Flyway flyway;
 
