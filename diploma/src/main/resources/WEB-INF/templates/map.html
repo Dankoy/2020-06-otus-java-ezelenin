@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{/static/leaflet/1.6.0/leaflet.css}"/>
     <script th:src="@{/static/leaflet/1.6.0/leaflet-src.js}"></script>
 
-    <script type="text/javascript" th:inline="javascript">
+    <script th:inline="javascript" type="text/javascript">
 
         /*<![CDATA[*/
         let contextPath = /*[[@{/}]]*/;
@@ -19,7 +19,7 @@
 
 <body onload="initMap()">
 
-<div id="mapid"></div>
+<div id="mapId"></div>
 
 <div id="zoomLevel">
     <table id="zoomToClusterTable">

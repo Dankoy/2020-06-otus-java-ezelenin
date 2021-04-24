@@ -17,7 +17,7 @@
 
 <body>
 
-<div id="map" class="map"></div>
+<div class="map" id="map"></div>
 <script type="text/javascript">
     var map = new ol.Map({
         target: 'map',
@@ -44,7 +44,7 @@
     map.addLayer(layer);
 
     var currZoom = map.getView().getZoom();
-    map.on('moveend', function(e) {
+    map.on('moveend', function (e) {
         var newZoom = map.getView().getZoom();
         if (currZoom !== newZoom) {
             console.log('zoom end, new zoom: ' + newZoom);
@@ -52,7 +52,6 @@
             console.log(currZoom);
         }
     });
-
 
 
 </script>

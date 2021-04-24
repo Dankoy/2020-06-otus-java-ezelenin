@@ -7,14 +7,14 @@
     <link rel="stylesheet" th:href="@{/static/leaflet/1.6.0/leaflet.css}"/>
     <script th:src="@{/static/leaflet/1.6.0/leaflet-src.js}"></script>
 
-<!--    <link rel="stylesheet" th:href="@{/static/leaflet/1.0.0/leaflet.css}"/>-->
-<!--    <script th:src="@{/static/leaflet/1.0.0/leaflet-src.js}"></script>-->
+    <!--    <link rel="stylesheet" th:href="@{/static/leaflet/1.0.0/leaflet.css}"/>-->
+    <!--    <script th:src="@{/static/leaflet/1.0.0/leaflet-src.js}"></script>-->
 
     <link rel="stylesheet" th:href="@{/static/leaflet/markercluster/MarkerCluster.Default.css}"/>
     <link rel="stylesheet" th:href="@{/static/leaflet/markercluster/MarkerCluster.css}"/>
     <script th:src="@{/static/leaflet/markercluster/leaflet.markercluster-src.js}"></script>
 
-    <script type="text/javascript" th:inline="javascript">
+    <script th:inline="javascript" type="text/javascript">
 
         /*<![CDATA[*/
         let contextPath = /*[[@{/}]]*/;
@@ -29,10 +29,10 @@
 
 <pre id="clusters"></pre>
 
-<div id="mapid"></div>
+<div id="mapId"></div>
 
 
-<script type="text/javascript" th:inline="javascript">
+<script th:inline="javascript" type="text/javascript">
 
     const zoom_relations = {
         "3": {
@@ -104,9 +104,8 @@
 
             // очистка от старых маркеров
             /* delete method */
-            map.eachLayer(function(layer) {
-                if (layer instanceof L.MarkerClusterGroup)
-                {
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.MarkerClusterGroup) {
                     map.removeLayer(layer)
                 }
             })
@@ -162,7 +161,7 @@
         overflow: hidden;
     }
 
-    #mapid {
+    #mapId {
         position: absolute;
         bottom: 0;
         height: 600px;

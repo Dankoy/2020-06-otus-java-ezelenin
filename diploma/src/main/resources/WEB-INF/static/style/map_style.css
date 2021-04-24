@@ -6,7 +6,7 @@ html, body {
     overflow: hidden;
 }
 
-#mapid {
+#mapId {
     position: absolute;
     /*bottom: 10px;*/
     height: 100%;
