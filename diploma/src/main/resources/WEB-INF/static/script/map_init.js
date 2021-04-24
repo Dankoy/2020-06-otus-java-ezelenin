@@ -38,6 +38,10 @@ const zoom_relations = {
     }
 }
 
+// Инициализация пустого массива маркеров
+let markers = [];
+let map = L.map('mapId');
+
 //дефолтное значение выборки данных
 let selectedData = "nonmotorist";
 
@@ -48,17 +52,13 @@ let selectedData = "nonmotorist";
 function getSelectedTextValue() {
     const ddlData = document.getElementById("ddlData");
     selectedData = ddlData.value;
+    printMarkersDelegate(map, markers);
 }
 
 
 function initMap() {
 
-    // Инициализация пустого массива маркеров
-    var markers = [];
-
-    var map = L.map('mapId');
-
-    var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    let OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         minZoom: 3,
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
