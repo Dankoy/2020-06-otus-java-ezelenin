@@ -17,6 +17,11 @@ html, body {
     float: right;
 }
 
+#dataSelector {
+    float: right;
+    top: 150px;
+}
+
 table, th, td {
     border: 1px solid black;
 }

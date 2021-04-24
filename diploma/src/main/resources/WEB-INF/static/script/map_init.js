@@ -38,12 +38,25 @@ const zoom_relations = {
     }
 }
 
+//дефолтное значение выборки данных
+let selectedData = "nonmotorist";
+
+/**
+ * Получение значения элемента селектора для осуществления запросов к базе с корректными данными
+ *
+ */
+function getSelectedTextValue() {
+    const ddlData = document.getElementById("ddlData");
+    selectedData = ddlData.value;
+}
+
+
 function initMap() {
 
     // Инициализация пустого массива маркеров
     var markers = [];
 
-    var map = L.map('mapid');
+    var map = L.map('mapId');
 
     var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         minZoom: 3,
@@ -213,9 +226,15 @@ async function printMarkersDelegate(map, markers) {
     document.getElementById('zoom').innerHTML = currentZoom;
     document.getElementById('cluster').innerHTML = zoom_relations[currentZoom].clusterSize;
 
+    let clusters;
+
+    if (selectedData === "nonmotorist") {
+        clusters = await getClustersByClusterSizeAndMapBounds(zoom_relations[currentZoom].clusterSize, north, south, west, east);
+    } else if (selectedData === "all") {
+        clusters = await getClustersByClusterSizeAndMapBoundsAll(zoom_relations[currentZoom].clusterSize, north, south, west, east);
+    }
+
     // var clusters = await getClustersByClusterSize(zoom_relations[currentZoom].clusterSize);
-    var clusters = await getClustersByClusterSizeAndMapBounds(zoom_relations[currentZoom].clusterSize, north, south, west, east);
-    // var clusters = await getClustersByClusterSizeAndMapBoundsAll(zoom_relations[currentZoom].clusterSize, north, south, west, east);
     // var clusters = await getClustersByClusterSizeAll(zoom_relations[currentZoom].clusterSize);
 
     // очистка от старых маркеров
