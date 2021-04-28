@@ -15,11 +15,6 @@ public class CrashController {
 
     @GetMapping(value = "/")
     public String startView() {
-        return "index.html";
-    }
-
-    @GetMapping(value = "/map")
-    public String mapView() {
         return "map.html";
     }
 
