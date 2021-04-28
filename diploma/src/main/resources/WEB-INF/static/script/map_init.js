@@ -1,4 +1,4 @@
-const defaultZoom = 9;
+const defaultZoom = 12;
 
 const zoom_relations = {
     "3": {
@@ -68,7 +68,7 @@ function initMap() {
     OpenStreetMap_Mapnik.addTo(map);
     L.control.scale().addTo(map);
 
-    map.setView([39.0458, -76.6413], defaultZoom);
+    map.setView([39.0840, -77.1528], defaultZoom);
 
     // Первоначальная отрисоква карты с маркерами
     printMarkersDelegate(map, markers);
