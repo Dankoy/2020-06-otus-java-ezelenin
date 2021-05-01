@@ -42,11 +42,10 @@ public class KMeansImpl {
      * @param k       количество кластеров
      * @return список кластеров
      */
-    public List<Cluster> cluster(List<Crash> crashes, int k) throws Exception {
+    public List<Cluster> cluster(List<Crash> crashes, int k) throws IllegalArgumentException {
 
-        // TODO: Добавить кастомное исклбчение
         if (k <= 0)
-            throw new Exception();
+            throw new IllegalArgumentException("Expected amount of clusters > 0, but got " + k);
 
         return cluster(crashes, k, buildRandomInitialClusters(crashes, k));
     }
