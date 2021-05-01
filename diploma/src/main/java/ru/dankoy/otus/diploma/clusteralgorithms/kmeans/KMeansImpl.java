@@ -3,12 +3,12 @@ package ru.dankoy.otus.diploma.clusteralgorithms.kmeans;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import ru.dankoy.otus.diploma.cluster.Cluster;
 import ru.dankoy.otus.diploma.cluster.ClusterImpl;
 import ru.dankoy.otus.diploma.core.model.Crash;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,6 +29,7 @@ import java.util.List;
  * <p>
  * На больших данных работает достаточно медленно
  */
+@Service
 public class KMeansImpl {
 
     // Радиус земли в метрах
