@@ -14,16 +14,17 @@ import java.util.List;
 @RestController
 public class KMeansClusterRestController {
 
-    private static final KMeansImpl kMeans = new KMeansImpl();
     private final DBServiceCrash dbServiceCrash;
+    private final KMeansImpl kMeans;
 
-    public KMeansClusterRestController(DBServiceCrash dbServiceCrash) {
+    public KMeansClusterRestController(DBServiceCrash dbServiceCrash, KMeansImpl kMeans) {
         this.dbServiceCrash = dbServiceCrash;
+        this.kMeans = kMeans;
     }
 
     @GetMapping(value = "/cluster/kmeans/all/{clusterSize}")
     public List<Cluster> getClustersForEverythingByClusterSize(
-            @PathVariable(name = "clusterSize") int clusterSize) throws Exception {
+            @PathVariable(name = "clusterSize") int clusterSize) {
         List<Crash> crashes = dbServiceCrash.getAllCrashes();
 
         return kMeans.cluster(crashes, clusterSize);
@@ -34,7 +35,7 @@ public class KMeansClusterRestController {
             @PathVariable(name = "clusterSize") int clusterSize, @RequestParam(name = "north") double north,
             @RequestParam(name = "south") double south,
             @RequestParam(name = "west") double west,
-            @RequestParam(name = "east") double east) throws Exception {
+            @RequestParam(name = "east") double east) {
 
         List<Crash> crashes = dbServiceCrash.getAllCrashesInMapBounds(north, south, west, east);
 
@@ -43,7 +44,7 @@ public class KMeansClusterRestController {
 
     @GetMapping(value = "/cluster/kmeans/nonmotorist/{clusterSize}")
     public List<Cluster> getClustersForNonMotoristsByClusterSize(
-            @PathVariable(name = "clusterSize") int clusterSize) throws Exception {
+            @PathVariable(name = "clusterSize") int clusterSize) {
         List<Crash> crashes = dbServiceCrash.getCrashesWithNonMotorists();
 
         return kMeans.cluster(crashes, clusterSize);
@@ -55,7 +56,7 @@ public class KMeansClusterRestController {
             @PathVariable(name = "clusterSize") int clusterSize, @RequestParam(name = "north") double north,
             @RequestParam(name = "south") double south,
             @RequestParam(name = "west") double west,
-            @RequestParam(name = "east") double east) throws Exception {
+            @RequestParam(name = "east") double east) {
 
         List<Crash> crashes = dbServiceCrash.getCrashesWithNonMotoristsInMapBounds(north, south, west, east);
 
