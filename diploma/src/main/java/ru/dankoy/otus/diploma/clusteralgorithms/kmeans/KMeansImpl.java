@@ -136,6 +136,11 @@ public class KMeansImpl {
 
         List<Cluster> clusters = new ArrayList<>();
 
+        if (amountOfClusters > crashes.size()) {
+            throw new IllegalArgumentException("Expected amount of clusters less or equals amount of accidents, but " +
+                    "got " + amountOfClusters);
+        }
+
         for (var i = 0; i < amountOfClusters; i++) {
 
             clusters.add(new ClusterImpl(crashes.get(i).getLatitude(), crashes.get(i).getLongitude()));
