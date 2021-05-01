@@ -69,4 +69,9 @@ public class ClusterImpl implements Cluster {
     public long getAmountOfPoints() {
         return points.size();
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }
