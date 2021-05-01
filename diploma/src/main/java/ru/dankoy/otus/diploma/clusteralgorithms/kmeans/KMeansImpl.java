@@ -1,6 +1,5 @@
 package ru.dankoy.otus.diploma.clusteralgorithms.kmeans;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,8 @@ public class KMeansImpl {
      * @param amountOfClusters количество кластеров
      * @return список кластеров
      */
-    public List<Cluster> cluster(List<Crash> crashes, int amountOfClusters) throws IllegalArgumentException {
+    public List<Cluster> cluster(List<Crash> crashes, int amountOfClusters) throws IllegalArgumentException,
+            CloneNotSupportedException {
 
         if (amountOfClusters <= 0)
             throw new IllegalArgumentException("Expected amount of clusters > 0, but got " + amountOfClusters);
@@ -60,7 +60,8 @@ public class KMeansImpl {
      * @param clusters         список сгенерированных кластеров с рандомными центрами
      * @return список кластеров {@link Cluster}
      */
-    private List<Cluster> cluster(List<Crash> crashes, int amountOfClusters, List<Cluster> clusters) {
+    private List<Cluster> cluster(List<Crash> crashes, int amountOfClusters, List<Cluster> clusters) throws
+            CloneNotSupportedException {
 
         List<Cluster> oldClusters = new ArrayList<>(amountOfClusters);
 
@@ -76,8 +77,9 @@ public class KMeansImpl {
             logger.info("On iteration {}", clusterizationIteration);
 
             for (var j = 0; j < amountOfClusters; j++) {
-                Cluster deepCopy = SerializationUtils.clone(clusters.get(j));
-                oldClusters.set(j, deepCopy);
+
+                Cluster clone = (Cluster) clusters.get(j).clone();
+                oldClusters.set(j, clone);
             }
             clusterizationIteration++;
 
@@ -125,8 +127,8 @@ public class KMeansImpl {
     /**
      * Генерирует центры кластеров в рандомных местах, используя существующие координаты точек {@link Cluster}
      *
-     * @param crashes список аварий {@link Crash}
-     * @param amountOfClusters       количество кластеров
+     * @param crashes          список аварий {@link Crash}
+     * @param amountOfClusters количество кластеров
      * @return список кластеров {@link Cluster} содержащий рандомные центры с рандомно распределенные аварии
      * {@link Crash}
      */
