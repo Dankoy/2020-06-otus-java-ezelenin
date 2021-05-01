@@ -55,26 +55,26 @@ public class KMeansImpl {
      * {@link Cluster}
      *
      * @param crashes  a List of {@link Crash}
-     * @param k
-     * @param clusters
-     * @return
+     * @param k        количество кластеров
+     * @param clusters список сгенерированных кластеров с рандомными центрами
+     * @return список кластеров {@link Cluster}
      */
     private List<Cluster> cluster(List<Crash> crashes, int k, List<Cluster> clusters) {
 
         List<Cluster> oldClusters = new ArrayList<>(k);
 
-        for (int i = 1; i <= k; i++) {
+        for (var i = 1; i <= k; i++) {
             oldClusters.add(new ClusterImpl());
         }
 
         logger.info("oldClusters size {}", oldClusters.size());
         logger.info("clusters size {}", clusters.size());
 
-        int i = 0;
+        var i = 0;
         while (!hasConverged(oldClusters, clusters)) {
             logger.info("On iteration {}", i);
 
-            for (int j = 0; j < k; j++) {
+            for (var j = 0; j < k; j++) {
                 Cluster deepCopy = SerializationUtils.clone(clusters.get(j));
                 oldClusters.set(j, deepCopy);
             }
@@ -112,9 +112,9 @@ public class KMeansImpl {
     /**
      * Метод обертка над методом {@link KMeansImpl#haversineDistance(double, double, double, double)}
      *
-     * @param crash
-     * @param centroid
-     * @return
+     * @param crash    объект аварии {@link Crash}
+     * @param centroid кластер с центром которого происходит расчет расстояния
+     * @return дистанция между двумя точками на земле
      */
     private double haversineDistance(Crash crash, Cluster centroid) {
         return haversineDistance(crash.getLatitude(), crash.getLongitude(), centroid.getLatitude(),
@@ -124,23 +124,24 @@ public class KMeansImpl {
     /**
      * Генерирует центры кластеров в рандомных местах, используя существующие координаты точек {@link Cluster}
      *
-     * @param crashes
-     * @param k
-     * @return
+     * @param crashes список аварий {@link Crash}
+     * @param k       количество кластеров
+     * @return список кластеров {@link Cluster} содержащий рандомные центры с рандомно распределенные аварии
+     * {@link Crash}
      */
     private List<Cluster> buildRandomInitialClusters(List<Crash> crashes, int k) {
 
         Collections.shuffle(crashes);
         List<Cluster> clusters = new ArrayList<>();
 
-        for (int i = 0; i < k; i++) {
+        for (var i = 0; i < k; i++) {
 
             clusters.add(new ClusterImpl(crashes.get(i).getLatitude(), crashes.get(i).getLongitude()));
 
         }
 
         // Заполняет кластера авариями
-        int i = 0;
+        var i = 0;
         for (Crash crash : crashes) {
             clusters.get(i).getPoints().add(crash);
             i++;
@@ -156,15 +157,15 @@ public class KMeansImpl {
      * Распределяет точки к наиболее подходящему кластеру {@link Cluster}, то есть находит ближайшую точку к кластеру
      * по формуле haversine.
      *
-     * @param crashes
-     * @param clusters
+     * @param crashes  список аварий {@link Crash}
+     * @param clusters список кластеров {@link Cluster}
      */
     private void assignPointsToClusters(List<Crash> crashes, List<Cluster> clusters) {
         // for each point, find the cluster with the closest center
         clusters.forEach(Cluster::clearPoints);
 
         for (Crash crash : crashes) {
-            Cluster current = clusters.get(0);
+            var current = clusters.get(0);
             for (Cluster cluster : clusters) {
                 if (haversineDistance(crash, cluster) < haversineDistance(crash, current)) {
                     current = cluster;
@@ -178,6 +179,8 @@ public class KMeansImpl {
 
     /**
      * Пересчитывает центр кластера для каждого кластера {@link Cluster}
+     *
+     * @param clusters список кластеров {@link Cluster}
      */
     private void adjustClusterCenters(List<Cluster> clusters) {
         for (Cluster cluster : clusters) {
@@ -205,7 +208,7 @@ public class KMeansImpl {
             throw new IllegalArgumentException("Clusters must be the same size");
 
         }
-        for (int i = 0; i < previous.size(); i++) {
+        for (var i = 0; i < previous.size(); i++) {
             if (!previous.get(i).getPoints().equals(current.get(i).getPoints())) {
                 return false;
             }
