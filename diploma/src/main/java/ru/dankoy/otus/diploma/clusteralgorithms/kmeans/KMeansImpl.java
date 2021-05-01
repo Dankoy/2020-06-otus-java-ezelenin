@@ -38,47 +38,47 @@ public class KMeansImpl {
     /**
      * Главный метод класса.
      *
-     * @param crashes a список из аварий {@link Crash}
-     * @param k       количество кластеров
+     * @param crashes          a список из аварий {@link Crash}
+     * @param amountOfClusters количество кластеров
      * @return список кластеров
      */
-    public List<Cluster> cluster(List<Crash> crashes, int k) throws IllegalArgumentException {
+    public List<Cluster> cluster(List<Crash> crashes, int amountOfClusters) throws IllegalArgumentException {
 
-        if (k <= 0)
-            throw new IllegalArgumentException("Expected amount of clusters > 0, but got " + k);
+        if (amountOfClusters <= 0)
+            throw new IllegalArgumentException("Expected amount of clusters > 0, but got " + amountOfClusters);
 
-        return cluster(crashes, k, buildRandomInitialClusters(crashes, k));
+        return cluster(crashes, amountOfClusters, buildRandomInitialClusters(crashes, amountOfClusters));
     }
 
     /**
      * Uses the KMeans algorithm to generate k clusters from the set of points using a predefined starting set of
      * {@link Cluster}
      *
-     * @param crashes  a List of {@link Crash}
-     * @param k        количество кластеров
-     * @param clusters список сгенерированных кластеров с рандомными центрами
+     * @param crashes          a List of {@link Crash}
+     * @param amountOfClusters количество кластеров
+     * @param clusters         список сгенерированных кластеров с рандомными центрами
      * @return список кластеров {@link Cluster}
      */
-    private List<Cluster> cluster(List<Crash> crashes, int k, List<Cluster> clusters) {
+    private List<Cluster> cluster(List<Crash> crashes, int amountOfClusters, List<Cluster> clusters) {
 
-        List<Cluster> oldClusters = new ArrayList<>(k);
+        List<Cluster> oldClusters = new ArrayList<>(amountOfClusters);
 
-        for (var i = 1; i <= k; i++) {
+        for (var clusterIndex = 1; clusterIndex <= amountOfClusters; clusterIndex++) {
             oldClusters.add(new ClusterImpl());
         }
 
         logger.info("oldClusters size {}", oldClusters.size());
         logger.info("clusters size {}", clusters.size());
 
-        var i = 0;
+        var clusterizationIteration = 0;
         while (!hasConverged(oldClusters, clusters)) {
-            logger.info("On iteration {}", i);
+            logger.info("On iteration {}", clusterizationIteration);
 
-            for (var j = 0; j < k; j++) {
+            for (var j = 0; j < amountOfClusters; j++) {
                 Cluster deepCopy = SerializationUtils.clone(clusters.get(j));
                 oldClusters.set(j, deepCopy);
             }
-            i++;
+            clusterizationIteration++;
 
             assignPointsToClusters(crashes, clusters);
             adjustClusterCenters(clusters);
@@ -125,16 +125,16 @@ public class KMeansImpl {
      * Генерирует центры кластеров в рандомных местах, используя существующие координаты точек {@link Cluster}
      *
      * @param crashes список аварий {@link Crash}
-     * @param k       количество кластеров
+     * @param amountOfClusters       количество кластеров
      * @return список кластеров {@link Cluster} содержащий рандомные центры с рандомно распределенные аварии
      * {@link Crash}
      */
-    private List<Cluster> buildRandomInitialClusters(List<Crash> crashes, int k) {
+    private List<Cluster> buildRandomInitialClusters(List<Crash> crashes, int amountOfClusters) {
 
         Collections.shuffle(crashes);
         List<Cluster> clusters = new ArrayList<>();
 
-        for (var i = 0; i < k; i++) {
+        for (var i = 0; i < amountOfClusters; i++) {
 
             clusters.add(new ClusterImpl(crashes.get(i).getLatitude(), crashes.get(i).getLongitude()));
 
@@ -145,7 +145,7 @@ public class KMeansImpl {
         for (Crash crash : crashes) {
             clusters.get(i).getPoints().add(crash);
             i++;
-            if (i == k) {
+            if (i == amountOfClusters) {
                 i = 0;
             }
         }
