@@ -131,7 +131,6 @@ public class KMeansImpl {
      */
     private List<Cluster> buildRandomInitialClusters(List<Crash> crashes, int amountOfClusters) {
 
-        Collections.shuffle(crashes);
         List<Cluster> clusters = new ArrayList<>();
 
         for (var i = 0; i < amountOfClusters; i++) {
