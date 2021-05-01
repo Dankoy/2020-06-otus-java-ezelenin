@@ -55,5 +55,5 @@ include 'hw12-jetty-server'
 include 'hw13-dependency-injection'
 include 'hw14-war-spring-mvc'
 include 'hw15-executors'
-
+include 'diploma'
 

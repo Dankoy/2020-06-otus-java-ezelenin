@@ -1,0 +1,60 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Анализ геоданных на выборке из ДТП штата Мэриленд</title>
+    <link rel="stylesheet" th:href="@{/static/openlayers/v6.5.0-dist/ol.css}" type="text/css">
+    <style>
+        .map {
+            height: 600px;
+            width: 800px;
+            position: absolute;
+        }
+    </style>
+    <script th:src="@{/static/openlayers/v6.5.0-dist/ol.js}"></script>
+</head>
+
+
+<body>
+
+<div class="map" id="map"></div>
+<script type="text/javascript">
+    var map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            }),
+        ],
+        view: new ol.View({
+            center: ol.proj.fromLonLat([-76.6413, 39.0458]),
+            zoom: 7
+        })
+    });
+
+    var layer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: [
+                new ol.Feature({
+                    geometry: new ol.geom.Point(ol.proj.fromLonLat([-76.6413, 39.0458]))
+                })
+            ]
+        })
+    });
+    map.addLayer(layer);
+
+    var currZoom = map.getView().getZoom();
+    map.on('moveend', function (e) {
+        var newZoom = map.getView().getZoom();
+        if (currZoom !== newZoom) {
+            console.log('zoom end, new zoom: ' + newZoom);
+            currZoom = newZoom;
+            console.log(currZoom);
+        }
+    });
+
+
+</script>
+
+</body>
+</html>

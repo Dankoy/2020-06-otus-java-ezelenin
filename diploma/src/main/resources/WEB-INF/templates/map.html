@@ -1,0 +1,63 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Анализ геоданных на выборке из ДТП штата Мэриленд</title>
+
+    <link rel="stylesheet" th:href="@{/static/leaflet/1.6.0/leaflet.css}"/>
+    <script th:src="@{/static/leaflet/1.6.0/leaflet-src.js}"></script>
+
+    <script th:inline="javascript" type="text/javascript">
+
+        /*<![CDATA[*/
+        let contextPath = /*[[@{/}]]*/;
+        /*]]>*/
+        const pathToApi = contextPath + "cluster/kmeans/";
+
+    </script>
+    <link rel="stylesheet" th:href="@{/static/style/map_style.css}"/>
+</head>
+
+<body onload="initMap()">
+
+<div id="mapId"></div>
+
+<div id="zoomLevel">
+    <table id="zoomToClusterTable">
+        <thead>
+        <tr>
+            <td>
+                zoom
+            </td>
+            <td>
+                clusters
+            </td>
+        </tr>
+        </thead>
+        <tr>
+            <td id="zoom">
+
+            </td>
+            <td id="cluster">
+
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="dataSelector">
+    Select data:
+    <label for="ddlData"></label>
+    <select id="ddlData">
+        <option value="all">All entries</option>
+        <option value="nonmotorist">Non-motorists</option>
+    </select>
+    <input type="button" id="dataSelectorButton" value="Get Selected Text Value" onclick="getSelectedTextValue()" />
+</div>
+
+<script th:src="@{/static/script/map_init.js}" type="text/javascript"></script>
+
+</body>
+
+<!--<link rel="stylesheet" th:href="@{/static/style/map_style.css}"/>-->
+</html>

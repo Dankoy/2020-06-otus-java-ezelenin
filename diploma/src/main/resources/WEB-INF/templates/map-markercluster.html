@@ -1,0 +1,172 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Анализ геоданных на выборке из ДТП штата Мэриленд</title>
+
+    <link rel="stylesheet" th:href="@{/static/leaflet/1.6.0/leaflet.css}"/>
+    <script th:src="@{/static/leaflet/1.6.0/leaflet-src.js}"></script>
+
+    <!--    <link rel="stylesheet" th:href="@{/static/leaflet/1.0.0/leaflet.css}"/>-->
+    <!--    <script th:src="@{/static/leaflet/1.0.0/leaflet-src.js}"></script>-->
+
+    <link rel="stylesheet" th:href="@{/static/leaflet/markercluster/MarkerCluster.Default.css}"/>
+    <link rel="stylesheet" th:href="@{/static/leaflet/markercluster/MarkerCluster.css}"/>
+    <script th:src="@{/static/leaflet/markercluster/leaflet.markercluster-src.js}"></script>
+
+    <script th:inline="javascript" type="text/javascript">
+
+        /*<![CDATA[*/
+        let contextPath = /*[[@{/}]]*/;
+        /*]]>*/
+        const pathToApi = contextPath + "cluster/kmeans/";
+
+    </script>
+
+</head>
+
+<body onload="initMap()">
+
+<pre id="clusters"></pre>
+
+<div id="mapId"></div>
+
+
+<script th:inline="javascript" type="text/javascript">
+
+    const zoom_relations = {
+        "3": {
+            clusterSize: 3
+        }, "4": {
+            clusterSize: 4
+        }, "5": {
+            clusterSize: 5
+        }, "6": {
+            clusterSize: 6
+        }, "7": {
+            clusterSize: 7
+        }, "8": {
+            clusterSize: 8
+        }, "9": {
+            clusterSize: 15
+        }, "10": {
+            clusterSize: 18
+        }, "11": {
+            clusterSize: 18
+        }, "12": {
+            clusterSize: 22
+        }, "13": {
+            clusterSize: 30
+        }, "14": {
+            clusterSize: 30
+        }, "15": {
+            clusterSize: 25
+        }, "16": {
+            clusterSize: 21
+        }, "17": {
+            clusterSize: 16
+        }, "18": {
+            clusterSize: 15
+        }, "19": {
+            clusterSize: 15
+        }
+    }
+
+    function initMap() {
+        var map = L.map('mapid');
+
+        var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            minZoom: 3,
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+
+        // Initialize with openstreetmap
+        OpenStreetMap_Mapnik.addTo(map);
+        L.control.scale().addTo(map);
+
+        map.setView([39.0458, -76.6413], 6);
+
+        // маркеры
+
+        var markerClusters = L.markerClusterGroup();
+
+        // var markers = [];
+
+        // Получение зумма и класетров
+        // логики в другом методе не сделать
+        async function onZoomend() {
+            var currentZoom = map.getZoom();
+            // document.getElementById("zlevel").innerHTML=currentZoom;
+            var clusters = await getClustersByClusterSize(zoom_relations[currentZoom].clusterSize);
+
+            // console.log(markers.length);
+
+            // очистка от старых маркеров
+            /* delete method */
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.MarkerClusterGroup) {
+                    map.removeLayer(layer)
+                }
+            })
+
+            createMarkersFromClusters(clusters, markerClusters);
+
+            // рисование новых маркеров
+            // markerClusters.forEach(marker => {
+            //     marker.addTo(map);
+            // })
+            map.addLayer(markerClusters);
+
+
+        }
+
+        map.on('zoomend', onZoomend);
+
+    }
+
+    function getClustersByClusterSize(clusterSize) {
+        const kmeansNonMotoristByClusterSize = 'nonmotorist/'
+        const clusterContainer = document.getElementById('clusters');
+        return fetch(pathToApi + kmeansNonMotoristByClusterSize + clusterSize)
+            .then(response => response.json())
+            .then(cluster => JSON.stringify(cluster))
+            .then(cluster => JSON.parse(cluster));
+
+    }
+
+    function createMarkersFromClusters(clusters, markerClusters) {
+
+        clusters.forEach(
+            cluster => {
+                var marker = new L.marker([cluster.latitude, cluster.longitude]);
+                markerClusters.addLayer(marker);
+                // markers.push(marker);
+            }
+        )
+
+    }
+
+
+</script>
+
+</body>
+
+<style type="text/css">
+    html, body {
+        padding: 0;
+        margin: 0;
+        bottom: 0;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    #mapId {
+        position: absolute;
+        bottom: 0;
+        height: 600px;
+        width: 800px;
+    }
+</style>
+
+</html>
