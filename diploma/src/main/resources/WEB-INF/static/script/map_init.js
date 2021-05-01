@@ -32,9 +32,9 @@ const zoom_relations = {
     }, "17": {
         clusterSize: 16
     }, "18": {
-        clusterSize: 15
+        clusterSize: 8
     }, "19": {
-        clusterSize: 15
+        clusterSize: 3
     }
 }
 
